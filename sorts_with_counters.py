@@ -5,6 +5,11 @@
 
 
 import time
+import sys
+
+
+sys.setrecursionlimit(1_000_000)
+
 
 
 class Counter:
