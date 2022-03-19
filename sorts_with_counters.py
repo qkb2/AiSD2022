@@ -186,7 +186,7 @@ def helper_insert(array: list, step: int, c: Counter, swaps: Counter):
 
 def shell_sort(array: list, c: Counter, swaps: Counter, knuth: list):
     step = 0
-    while step <= len(array)//3+1:
+    while step < len(array)//3:
         c.add(1)
         step = 3*step+1
 

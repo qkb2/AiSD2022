@@ -117,7 +117,7 @@ def helper_insert(array, step):
 
 def shell_sort(array):
     step = 0
-    while step <= len(array)//3+1:
+    while step < len(array)//3:
         step = 3*step+1
 
     while step > 0:
