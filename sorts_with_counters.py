@@ -1,4 +1,4 @@
-# I/O requirements:
+# I/O requirements (REVERSE ORDER):
 # sorting time, amount of operations (comparisons and swaps, for merge sort only comparisons)
 # for user-inserted input also:
 # original and sorted array, pivots in every iteration for quicksort, amount of merges in merge sort, increment value for shell sort
@@ -23,13 +23,13 @@ class Counter:
 # DONE: comparisons and merges counter
 def merge(left_array: list, right_array: list, array: list, c: Counter):
     # function merges both arrays together
-    # next element to be added to the array is chosen from the smallest elements from both L and R arrays.
-    # val. l and r increment every time their smallest element is merged (so that l and r always point towards the next
+    # next element to be added to the array is chosen from the greatest elements from both L and R arrays.
+    # val. l and r increment every time their greater element is merged (so that l and r always point towards the next
     # variable element that wasn't added to the array
     l = r = k = 0
     while l < len(left_array) and r < len(right_array):
         c.add(3)  # two for the while loop above and one for the if below
-        if left_array[l] < right_array[r]:
+        if left_array[l] > right_array[r]:
             array[k] = left_array[l]
             l += 1
         else:
@@ -81,7 +81,7 @@ def merge_sort_wrapper(array: list):
 
 # DONE: comparisons and swaps counter
 def heapify(array: list, parent_idx: int, heap_size: int, c: Counter, swaps: Counter):
-    # this recursive procedure produces a max-heap structure by first comparing both of the children to their parent and
+    # this recursive procedure produces a min-heap structure by first comparing both of the children to their parent and
     # arranging them in a proper heap-order. If the structure changed the heapify procedure is called once more to "fix"
     # the sub-heap affected by the change
     left_child_idx = 2 * parent_idx + 1
@@ -90,13 +90,13 @@ def heapify(array: list, parent_idx: int, heap_size: int, c: Counter, swaps: Cou
     c.add(1)
     if left_child_idx < heap_size:
         c.add(1)
-        if array[largest_idx] < array[left_child_idx]:
+        if array[largest_idx] > array[left_child_idx]:
             largest_idx = left_child_idx
 
     c.add(1)
     if right_child_idx < heap_size:
         c.add(1)
-        if array[largest_idx] < array[right_child_idx]:
+        if array[largest_idx] > array[right_child_idx]:
             largest_idx = right_child_idx
 
     c.add(1)
@@ -145,7 +145,7 @@ def insertion_sort(array: list, c: Counter, swaps: Counter):
         c.add(1)
         key = array[i]
         j = i-1
-        while j >= 0 and array[j] > key:
+        while j >= 0 and array[j] < key:
             c.add(2)
             array[j+1] = array[j]
             swaps.add(1)
@@ -173,7 +173,7 @@ def helper_insert(array: list, step: int, c: Counter, swaps: Counter):
         c.add(1)
         key = array[i]
         j = i - step
-        while j >= 0 and array[j] > key:
+        while j >= 0 and array[j] < key:
             c.add(2)
             array[j + step] = array[j]
             swaps.add(1)
@@ -217,7 +217,7 @@ def partition(array: list, low: int, high: int, c: Counter, swaps: Counter):
     i = low-1
     for j in range(low, high):
         c.add(2)
-        if array[j] <= pivot:
+        if array[j] >= pivot:
             i += 1
             array[i], array[j] = array[j], array[i]
             swaps.add(1)

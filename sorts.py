@@ -1,4 +1,4 @@
-# I/O requirements:
+# I/O requirements (REVERSE ORDER):
 # sorting time, amount of operations (comparisons and swaps, for merge sort only comparisons)
 # for user-inserted input also:
 # original and sorted array, pivots in every iteration for quicksort, amount of merges in merge sort, increment value for shell sort
@@ -7,12 +7,12 @@
 # DONE 1: merge sort
 def merge(left_array, right_array, array):
     # function merges both arrays together
-    # next element to be added to the array is chosen from the smallest elements from both L and R arrays.
-    # val. l and r increment every time their smallest element is merged (so that l and r always point towards the next
+    # next element to be added to the array is chosen from the greatest elements from both L and R arrays.
+    # val. l and r increment every time their greater element is merged (so that l and r always point towards the next
     # variable element that wasn't added to the array
     l = r = k = 0
     while l < len(left_array) and r < len(right_array):
-        if left_array[l] < right_array[r]:
+        if left_array[l] > right_array[r]:
             array[k] = left_array[l]
             l += 1
         else:
@@ -49,18 +49,18 @@ def merge_sort(array):
 
 # DONE: heap sort
 def heapify(array, parent_idx, heap_size):
-    # this recursive procedure produces a max-heap structure by first comparing both of the children to their parent and
+    # this recursive procedure produces a min-heap structure by first comparing both of the children to their parent and
     # arranging them in a proper heap-order. If the structure changed the heapify procedure is called once more to "fix"
     # the sub-heap affected by the change
     left_child_idx = 2 * parent_idx + 1
     right_child_idx = 2 * parent_idx + 2
     largest_idx = parent_idx
     if left_child_idx < heap_size:
-        if array[largest_idx] < array[left_child_idx]:
+        if array[largest_idx] > array[left_child_idx]:
             largest_idx = left_child_idx
 
     if right_child_idx < heap_size:
-        if array[largest_idx] < array[right_child_idx]:
+        if array[largest_idx] > array[right_child_idx]:
             largest_idx = right_child_idx
 
     if largest_idx != parent_idx:
@@ -92,7 +92,7 @@ def insertion_sort(array):
     for i in range(1, len(array)):
         key = array[i]
         j = i-1
-        while j >= 0 and array[j] > key:
+        while j >= 0 and array[j] < key:
             array[j+1] = array[j]
             j -= 1
 
@@ -106,7 +106,7 @@ def helper_insert(array, step):
     for i in range(1, len(array)-step+1, step):
         key = array[i]
         j = i - step
-        while j >= 0 and array[j] > key:
+        while j >= 0 and array[j] < key:
             array[j + step] = array[j]
             j -= step
 
@@ -132,7 +132,7 @@ def partition(array, low, high):
     pivot = array[high]  # pivot chosen as the last element of a sequence
     i = low-1
     for j in range(low, high):
-        if array[j] <= pivot:
+        if array[j] >= pivot:
             i += 1
             array[i], array[j] = array[j], array[i]
 
