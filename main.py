@@ -33,6 +33,10 @@ class UserPrompt:
             print("The input should not be empty")
             return False
 
+        # if len(array) > 10:
+        #     print("The amount of numbers should not be greater than 10.")
+        #     return False
+
         try:
             array = list(map(int, array))
         except ValueError:
