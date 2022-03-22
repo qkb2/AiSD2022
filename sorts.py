@@ -5,7 +5,7 @@
 
 
 # DONE 1: merge sort
-def merge(left_array, right_array, array):
+def merge(left_array: list, right_array: list, array: list) -> None:
     # function merges both arrays together
     # next element to be added to the array is chosen from the greatest elements from both L and R arrays.
     # val. l and r increment every time their greater element is merged (so that l and r always point towards the next
@@ -34,7 +34,7 @@ def merge(left_array, right_array, array):
     return None
 
 
-def merge_sort(array):
+def merge_sort(array: list) -> list:
     if len(array) > 1:
         midway = len(array)//2
         left_array = array[:midway]
@@ -48,7 +48,7 @@ def merge_sort(array):
 
 
 # DONE: heap sort
-def heapify(array, parent_idx, heap_size):
+def heapify(array: list, parent_idx: int, heap_size: int) -> None:
     # this recursive procedure produces a min-heap structure by first comparing both of the children to their parent and
     # arranging them in a proper heap-order. If the structure changed the heapify procedure is called once more to "fix"
     # the sub-heap affected by the change
@@ -70,7 +70,7 @@ def heapify(array, parent_idx, heap_size):
     return None
 
 
-def build_heap(array):
+def build_heap(array: list) -> list:
     # the len(array)//2-1 is the index of the last parent
     for i in range(len(array)//2-1, -1, -1):
         heapify(array, i, len(array))
@@ -78,7 +78,7 @@ def build_heap(array):
     return array
 
 
-def heap_sort(array):
+def heap_sort(array: list) -> list:
     build_heap(array)
     for i in range(len(array)-1, 0, -1):
         array[i], array[0] = array[0], array[i]
@@ -88,7 +88,7 @@ def heap_sort(array):
 
 
 # DONE: insertion sort
-def insertion_sort(array):
+def insertion_sort(array: list) -> list:
     for i in range(1, len(array)):
         key = array[i]
         j = i-1
@@ -102,7 +102,7 @@ def insertion_sort(array):
 
 
 # DONE: shell-sort w/ knuth increments
-def helper_insert(array, step):
+def helper_insert(array: list, step: int) -> list:
     for i in range(1, len(array)-step+1, step):
         key = array[i]
         j = i - step
@@ -115,7 +115,7 @@ def helper_insert(array, step):
     return array
 
 
-def shell_sort(array):
+def shell_sort(array: list) -> list:
     step = 0
     while step < len(array)//3:
         step = 3*step+1
@@ -128,7 +128,7 @@ def shell_sort(array):
 
 
 # DONE: quicksort - recursive, pivot = last el. of a seq.
-def partition(array, low, high):
+def partition(array: list, low: int, high: int) -> int:
     pivot = array[high]  # pivot chosen as the last element of a sequence
     i = low-1
     for j in range(low, high):
@@ -140,7 +140,7 @@ def partition(array, low, high):
     return i+1
 
 
-def quick_sort_recursive(array, low, high):
+def quick_sort_recursive(array: list, low: int, high: int) -> list:
     if len(array) == 1:
         return array
 
@@ -152,5 +152,5 @@ def quick_sort_recursive(array, low, high):
     return array
 
 
-def quick_sort(array):
+def quick_sort(array: list):
     return quick_sort_recursive(array, 0, len(array)-1)

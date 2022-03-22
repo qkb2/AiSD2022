@@ -16,12 +16,12 @@ class Counter:
     def __init__(self) -> None:
         self.counter = 0
 
-    def add(self, i):
+    def add(self, i: int) -> None:
         self.counter += i
 
 
 # DONE: comparisons and merges counter
-def merge(left_array: list, right_array: list, array: list, c: Counter):
+def merge(left_array: list, right_array: list, array: list, c: Counter) -> None:
     # function merges both arrays together
     # next element to be added to the array is chosen from the greatest elements from both L and R arrays.
     # val. l and r increment every time their greater element is merged (so that l and r always point towards the next
@@ -53,7 +53,7 @@ def merge(left_array: list, right_array: list, array: list, c: Counter):
     return None
 
 
-def merge_sort(array: list, c: Counter, merges: Counter):
+def merge_sort(array: list, c: Counter, merges: Counter) -> tuple[list, Counter, Counter]:
     c.add(1)
     if len(array) > 1:
         midway = len(array)//2
@@ -68,7 +68,7 @@ def merge_sort(array: list, c: Counter, merges: Counter):
     return array, c, merges
 
 
-def merge_sort_wrapper(array: list):
+def merge_sort_wrapper(array: list) -> tuple[list, int, int, float]:
     c = Counter()
     merges = Counter()
     start_time = time.perf_counter()
@@ -80,7 +80,7 @@ def merge_sort_wrapper(array: list):
 
 
 # DONE: comparisons and swaps counter
-def heapify(array: list, parent_idx: int, heap_size: int, c: Counter, swaps: Counter):
+def heapify(array: list, parent_idx: int, heap_size: int, c: Counter, swaps: Counter) -> None:
     # this recursive procedure produces a min-heap structure by first comparing both of the children to their parent and
     # arranging them in a proper heap-order. If the structure changed the heapify procedure is called once more to "fix"
     # the sub-heap affected by the change
@@ -108,7 +108,7 @@ def heapify(array: list, parent_idx: int, heap_size: int, c: Counter, swaps: Cou
     return None
 
 
-def build_heap(array: list, c: Counter, swaps: Counter):
+def build_heap(array: list, c: Counter, swaps: Counter) -> list:
     # the len(array)//2-1 is the index of the last parent
     for i in range(len(array)//2-1, -1, -1):
         c.add(1)
@@ -117,7 +117,7 @@ def build_heap(array: list, c: Counter, swaps: Counter):
     return array
 
 
-def heap_sort(array: list, c: Counter, swaps: Counter):
+def heap_sort(array: list, c: Counter, swaps: Counter) -> list:
     build_heap(array, c, swaps)
     for i in range(len(array)-1, 0, -1):
         c.add(1)
@@ -128,7 +128,7 @@ def heap_sort(array: list, c: Counter, swaps: Counter):
     return array
 
 
-def heap_sort_wrapper(array: list):
+def heap_sort_wrapper(array: list) -> tuple[list, int, int, float]:
     c = Counter()
     swaps = Counter()
     start_time = time.perf_counter()
@@ -140,7 +140,7 @@ def heap_sort_wrapper(array: list):
 
 
 # DONE: comparisons and swaps counter
-def insertion_sort(array: list, c: Counter, swaps: Counter):
+def insertion_sort(array: list, c: Counter, swaps: Counter) -> list:
     for i in range(1, len(array)):
         c.add(1)
         key = array[i]
@@ -156,7 +156,7 @@ def insertion_sort(array: list, c: Counter, swaps: Counter):
     return array
 
 
-def insertion_sort_wrapper(array: list):
+def insertion_sort_wrapper(array: list) -> tuple[list, int, int, float]:
     c = Counter()
     swaps = Counter()
     start_time = time.perf_counter()
@@ -168,7 +168,7 @@ def insertion_sort_wrapper(array: list):
 
 
 # DONE: comparisons and swaps counter, increments
-def helper_insert(array: list, step: int, c: Counter, swaps: Counter):
+def helper_insert(array: list, step: int, c: Counter, swaps: Counter) -> list:
     for i in range(1, len(array)-step+1, step):
         c.add(1)
         key = array[i]
@@ -184,7 +184,7 @@ def helper_insert(array: list, step: int, c: Counter, swaps: Counter):
     return array
 
 
-def shell_sort(array: list, c: Counter, swaps: Counter, knuth: list):
+def shell_sort(array: list, c: Counter, swaps: Counter, knuth: list) -> list:
     step = 0
     while step < len(array)//3:
         c.add(1)
@@ -199,7 +199,7 @@ def shell_sort(array: list, c: Counter, swaps: Counter, knuth: list):
     return array
 
 
-def shell_sort_wrapper(array: list):
+def shell_sort_wrapper(array: list) -> tuple[list, int, int, float, list]:
     c = Counter()
     swaps = Counter()
     knuth = []
@@ -212,7 +212,7 @@ def shell_sort_wrapper(array: list):
 
 
 # DONE: comparisons and swaps counter, pivots
-def partition(array: list, low: int, high: int, c: Counter, swaps: Counter):
+def partition(array: list, low: int, high: int, c: Counter, swaps: Counter) -> int:
     pivot = array[high]  # pivot chosen as the last element of a sequence
     i = low-1
     for j in range(low, high):
@@ -227,7 +227,7 @@ def partition(array: list, low: int, high: int, c: Counter, swaps: Counter):
     return i+1
 
 
-def quick_sort_recursive(array: list, low: int, high: int, c: Counter, swaps: Counter, pivots: list):
+def quick_sort_recursive(array: list, low: int, high: int, c: Counter, swaps: Counter, pivots: list) -> list:
     c.add(1)
     if len(array) == 1:
         return array
@@ -246,7 +246,7 @@ def quick_sort(array: list, c: Counter, swaps: Counter, pivots: list):
     return quick_sort_recursive(array, 0, len(array)-1, c, swaps, pivots)
 
 
-def quick_sort_wrapper(array: list):
+def quick_sort_wrapper(array: list) -> tuple[list, int, int, float, list]:
     c = Counter()
     swaps = Counter()
     pivots = []
