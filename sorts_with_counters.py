@@ -53,7 +53,7 @@ def merge(left_array: list, right_array: list, array: list, c: Counter) -> None:
     return None
 
 
-def merge_sort(array: list, c: Counter, merges: Counter) -> tuple[list, Counter, Counter]:
+def merge_sort(array: list, c: Counter, merges: Counter):
     c.add(1)
     if len(array) > 1:
         midway = len(array)//2
@@ -68,7 +68,7 @@ def merge_sort(array: list, c: Counter, merges: Counter) -> tuple[list, Counter,
     return array, c, merges
 
 
-def merge_sort_wrapper(array: list) -> tuple[list, int, int, float]:
+def merge_sort_wrapper(array: list):
     c = Counter()
     merges = Counter()
     start_time = time.perf_counter()
@@ -128,7 +128,7 @@ def heap_sort(array: list, c: Counter, swaps: Counter) -> list:
     return array
 
 
-def heap_sort_wrapper(array: list) -> tuple[list, int, int, float]:
+def heap_sort_wrapper(array: list):
     c = Counter()
     swaps = Counter()
     start_time = time.perf_counter()
@@ -156,7 +156,7 @@ def insertion_sort(array: list, c: Counter, swaps: Counter) -> list:
     return array
 
 
-def insertion_sort_wrapper(array: list) -> tuple[list, int, int, float]:
+def insertion_sort_wrapper(array: list):
     c = Counter()
     swaps = Counter()
     start_time = time.perf_counter()
@@ -199,7 +199,7 @@ def shell_sort(array: list, c: Counter, swaps: Counter, knuth: list) -> list:
     return array
 
 
-def shell_sort_wrapper(array: list) -> tuple[list, int, int, float, list]:
+def shell_sort_wrapper(array: list):
     c = Counter()
     swaps = Counter()
     knuth = []
@@ -246,7 +246,7 @@ def quick_sort(array: list, c: Counter, swaps: Counter, pivots: list):
     return quick_sort_recursive(array, 0, len(array)-1, c, swaps, pivots)
 
 
-def quick_sort_wrapper(array: list) -> tuple[list, int, int, float, list]:
+def quick_sort_wrapper(array: list):
     c = Counter()
     swaps = Counter()
     pivots = []
