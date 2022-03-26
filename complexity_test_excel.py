@@ -1,5 +1,6 @@
 import time
 import csv
+import statistics as st
 from typing import Callable
 
 import sorts_with_counters
@@ -61,29 +62,38 @@ def testing_for_users(n: int, i: int, algo: str, gen: str):
 
 def testing_helper(n: int, iter: int, sortfun: Callable, genfun: Callable):
 
-    experiment_data = []
+    comp_data = []
+    swaps_data = []
+    time_data = []
     avg_comp = 0
     avg_swaps = 0
     avg_time = 0
 
     for i in range(iter):
-        experiment_data.append([])
         arr = genfun(n)
         data = sortfun(arr)
-        avg_comp += data[1]
-        avg_swaps += data[2]
-        avg_time += data[3]
-        experiment_data[i].append(str(data[1]))
-        experiment_data[i].append(str(data[2]))
-        experiment_data[i].append(str(data[3]))
+        # avg_comp += data[1]
+        # avg_swaps += data[2]
+        # avg_time += data[3]
+        comp_data.append(data[1])
+        swaps_data.append(data[2])
+        time_data.append(data[3])
 
-    avg_comp /= iter
-    avg_swaps /= iter
-    avg_time /= iter
+    # avg_comp /= iter
+    # avg_swaps /= iter
+    # avg_time /= iter
+    avg_comp = st.mean(comp_data)
+    avg_swaps = st.mean(swaps_data)
+    avg_time = st.mean(time_data)
+    comp_std = st.stdev(comp_data)
+    swaps_std = st.stdev(swaps_data)
+    time_std = st.stdev(time_data)
+
+
 
     with open('data_for_excel.csv', 'a', newline='') as csvf:
         csvwriter = csv.writer(csvf, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        csvwriter.writerow([sortfun.__name__, genfun.__name__, str(n), str(avg_comp), str(avg_swaps), str(avg_time)])
+        csvwriter.writerow([sortfun.__name__, genfun.__name__, str(n), str(avg_comp), str(avg_swaps), str(avg_time), str(comp_std), str(swaps_std), str(time_std)])
         csvf.close()
 
     return None
@@ -95,7 +105,7 @@ def testing_suit():
         for genfun in [
             generator.random_generator, generator.increasing_generator, generator.decreasing_generator, generator.a_shaped_generator, generator.v_shaped_generator]:
             for n in [x*250 for x in range(1, 13)]:
-                testing_helper(n, 5, sortfun, genfun)
+                testing_helper(n, 10, sortfun, genfun)
 
 
 
