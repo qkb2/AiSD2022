@@ -16,7 +16,8 @@ class UserPrompt:
 
     def array_options(self):
         print(
-            "Warning! This program accepts only integer values. Negative integers will be converted to their absolute value. The array cannot be empty.")
+            "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
+            "value. The array cannot be empty.")
         array = input(
             "Please enter your numbers as a one line, one whitespace between each of them: ").split()
 
@@ -55,25 +56,30 @@ class UserPrompt:
             print("test user AVL")
             return
 
-
     def main_loop(self):
         while True:
             s = input("Choose one of the following options: [testing, user input]. ").lower()
             if s == "user input":
                 self.user_loop()
-                s = input("If you want to exit the program, enter one of the following: [q, exit, quit]. Otherwise press Enter to try again. ")
+                s = input(
+                    "If you want to exit the program, enter one of the following: [q, exit, quit]. Otherwise press "
+                    "Enter to try again. ")
                 if s == "q" or s == "exit" or s == "quit":
                     return
-                
+
             elif s == "testing":
                 print(
-                    "Warning! Auto-testing takes a long time to complete and its completion is dependent on the user's computer specs. The data will be generated in the data.csv file.")
-                print("Now wait for the data collection to complete. After that, the program will automatically shut down.")
+                    "Warning! Auto-testing takes a long time to complete and its completion is dependent on the "
+                    "user's computer specs. The data will be generated in the data.csv file.")
+                print(
+                    "Now wait for the data collection to complete. After that, the program will automatically shut "
+                    "down.")
                 # tree_test.testing_suit()
                 return
-            
+
             else:
                 print("Please enter the correct option.")
+
 
 if __name__ == '__main__':
     prompt = UserPrompt()

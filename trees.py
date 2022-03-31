@@ -12,4 +12,15 @@
 # output: sorting time plus printing all the procedures
 # time should be measured on: 1) structure creation 2) searching for the min. value 3) in-order printing
 # for BST time should also be measured on BST balancing
-# testing: one point on a plot is an avg of 10 samples, plot should have at least 10 values of n, SD should also be provided
+# testing: one point on a plot is an avg of 10 samples
+# plot should have at least 10 values of n, SD should also be provided
+
+
+class Node:
+    def __init__(self, data: int) -> None:
+        self.data = data
+        self.left = None
+        self.right = None
+
+    def __str__(self) -> str:
+        return str(self.data)
