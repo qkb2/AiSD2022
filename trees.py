@@ -40,7 +40,7 @@ class avl_tree:
         return nd.key
 
     def traverse_pre_order(self, nd):
-        #root first, then left and then right
+        # root first, then left and then right
 
         if nd:
             # print the root
@@ -102,4 +102,19 @@ if __name__ == '__main__':
 # output: sorting time plus printing all the procedures
 # time should be measured on: 1) structure creation 2) searching for the min. value 3) in-order printing
 # for BST time should also be measured on BST balancing
+<<<<<<< HEAD
 # testing: one point on a plot is an avg of 10 samples, plot should have at least 10 values of n, SD should also be provided
+=======
+# testing: one point on a plot is an avg of 10 samples
+# plot should have at least 10 values of n, SD should also be provided
+
+
+class Node:
+    def __init__(self, data: int) -> None:
+        self.data = data
+        self.left = None
+        self.right = None
+
+    def __str__(self) -> str:
+        return str(self.data)
+>>>>>>> 729a22976c2b53d807693cdbc13dc4d20b2fd43b
