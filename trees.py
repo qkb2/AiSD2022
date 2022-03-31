@@ -2,7 +2,7 @@ from sorts import merge_sort
 
 class node:
 
-    def __init__(self, key):
+    def __init__(self, key: int):
         self.key = key
         self.left = None
         self.right = None
@@ -13,11 +13,11 @@ class avl_tree:
     def __init__(self):
         self.nodes = []
 
-    def generate(self, array):
+    def generate(self, array: list):
         # sort the array with a given sort alg
         # choose median point
         # make median point the root and split the rest
-        # proceede until len = 1
+        # procede until len = 1
 
         if len(array) == 1:
             return array[0]
@@ -39,7 +39,7 @@ class avl_tree:
         self.nodes.append(nd)
         return nd.key
 
-    def traverse_pre_order(self, nd):
+    def traverse_pre_order(self, nd: node):
         # root first, then left and then right
 
         if nd:
@@ -102,19 +102,4 @@ if __name__ == '__main__':
 # output: sorting time plus printing all the procedures
 # time should be measured on: 1) structure creation 2) searching for the min. value 3) in-order printing
 # for BST time should also be measured on BST balancing
-<<<<<<< HEAD
 # testing: one point on a plot is an avg of 10 samples, plot should have at least 10 values of n, SD should also be provided
-=======
-# testing: one point on a plot is an avg of 10 samples
-# plot should have at least 10 values of n, SD should also be provided
-
-
-class Node:
-    def __init__(self, data: int) -> None:
-        self.data = data
-        self.left = None
-        self.right = None
-
-    def __str__(self) -> str:
-        return str(self.data)
->>>>>>> 729a22976c2b53d807693cdbc13dc4d20b2fd43b
