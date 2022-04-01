@@ -1,3 +1,4 @@
+import copy
 from sorts import merge_sort
 
 class node:
@@ -7,6 +8,14 @@ class node:
         self.left = None
         self.right = None
 
+
+def traversal_wrapper(func):
+    def wrapper(*args, **kwargs):
+        sorted_nodes = []
+        func(*args, sorted_nodes, **kwargs)
+
+        return sorted_nodes
+    return wrapper
 
 class avl_tree:
 
@@ -39,36 +48,184 @@ class avl_tree:
         self.nodes.append(nd)
         return nd.key
 
-    def traverse_pre_order(self, nd: node):
+
+    def get_node(self, val: int):
+        try:
+            f_node = list(filter(lambda x: x.key == val, self.nodes))[0]
+        except:
+            f_node = None
+
+        return f_node
+
+    def find_node(self, val: int):
+        try:
+            f_node = list(
+                filter(
+                    lambda x: x.key == val or x.left == val or x.right == val,
+                    self.nodes
+                )
+            )[0]
+        except:
+            f_node = None
+
+        return f_node
+
+    def traverse_pre_order(self, nd: node, nd_arr: list):
         # root first, then left and then right
 
         if nd:
             # print the root
-            print(nd.key)
+            nd_arr.append(nd.key)
 
             # find and print the left node if exists
-            try:
-                left_node = list(
-                    filter(lambda x: x.key == nd.left, self.nodes)
-                )[0]
-            except:
-                left_node = None
+            left_node = self.get_node(nd.left)
+            if not left_node:
                 if nd.left:
-                    print(nd.left)
+                    nd_arr.append(nd.left)
 
-            self.traverse_pre_order(left_node)
+            self.traverse_pre_order(left_node, nd_arr)
 
             # find and print the right node if exists
-            try:
-                right_node = list(
-                    filter(lambda x: x.key == nd.right, self.nodes)
-                )[0]
-            except:
-                right_node = None
+            right_node = self.get_node(nd.right)
+            if not right_node:
                 if nd.right:
-                    print(nd.right)
+                    nd_arr.append(nd.right)
 
-            self.traverse_pre_order(right_node)
+            self.traverse_pre_order(right_node, nd_arr)
+
+    def traverse_in_order(self, nd: node, nd_arr: list):
+        # left first, then root and then right
+
+        if nd:
+            # find and print the left node if exists
+            left_node = self.get_node(nd.left)
+            if not left_node:
+                if nd.left:
+                    nd_arr.append(nd.left)
+
+            self.traverse_in_order(left_node, nd_arr)
+
+            # print the root
+            nd_arr.append(nd.key)
+
+            # find and print the right node if exists
+            right_node = self.get_node(nd.right)
+            if not right_node:
+                if nd.right:
+                    nd_arr.append(nd.right)
+
+            self.traverse_in_order(right_node, nd_arr)
+
+    def traverse_post_order(self, nd: node, nd_arr: list):
+        # left first, then right and then root
+
+        if nd:
+            # find and print the left node if exists
+            left_node = self.get_node(nd.left)
+            if not left_node:
+                if nd.left:
+                    nd_arr.append(nd.left)
+
+            self.traverse_post_order(left_node, nd_arr)
+
+            # find and print the right node if exists
+            right_node = self.get_node(nd.right)
+            if not right_node:
+                if nd.right:
+                    nd_arr.append(nd.right)
+
+            self.traverse_post_order(right_node, nd_arr)
+
+            # print the root
+            nd_arr.append(nd.key)
+
+    def find_min(self, nd: node):
+        if nd:
+            print(nd.key, "-> ", end="")
+            if not nd.left:
+                mn = nd.key
+                return mn
+            left_node = self.get_node(nd.left)
+            if not left_node:
+                if nd.left:
+                    mn = nd.left
+                    return mn
+
+            return self.find_min(left_node)
+
+    def find_max(self, nd: node):
+        if nd:
+            print(nd.key, "-> ", end="")
+            if not nd.right:
+                mn = nd.key
+                return mn
+            right_node = self.get_node(nd.right)
+            if not right_node:
+                if nd.right:
+                    mn = nd.right
+                    return mn
+
+            return self.find_max(right_node)
+
+    def remove_leaf_or_ochn(self, val: int):
+        # locate the value
+        f_node = self.get_node(val)
+        if not f_node:
+            f_node = self.find_node(val)
+            if not f_node:
+                return
+
+        # if value is leaf, just remove
+        if val == f_node.left:
+            f_node.left = None
+        if val == f_node.right:
+            f_node.right = None
+
+        # elif value has one child, remove value, make child root
+        # and update tree
+        if val == f_node.key:
+            if f_node.left and not f_node.right:
+                n_key = copy.deepcopy(f_node.key)
+                f_node.key = f_node.left
+                f_node.left = None
+                p_node = self.find_node(n_key)
+
+                if p_node.left == n_key:
+                    p_node.left = f_node.key
+                if p_node.right == n_key:
+                    p_node.right = f_node.key
+
+            elif f_node.right and not f_node.left:
+                n_key = copy.deepcopy(f_node.key)
+                f_node.key = f_node.right
+                f_node.right = None
+                p_node = self.find_node(n_key)
+
+                if p_node.left == n_key:
+                    p_node.left = f_node.key
+                if p_node.right == n_key:
+                    p_node.right = f_node.key
+
+        # elif value has two chldren, remove value, make neighbour (in value) a root
+        if val == f_node.key:
+            self.remove_root(f_node)
+
+    def remove_root(self, nd: node):
+        # sort nodes in-order
+        # get one of the neighbours and set as root
+        # remove the neighbour from its previous position
+
+        srt_nd = traversal_wrapper(avl.traverse_in_order)(nd)
+
+        for i in range(len(srt_nd)):
+            if srt_nd[i] == nd.key:
+                if i + 1 < len(srt_nd):
+                    neigh = srt_nd[i + 1]
+                else:
+                    neigh = srt_nd[i - 1]
+
+        self.remove_leaf_or_ochn(neigh)
+        nd.key = neigh
 
     def print_tree(self):
         for k in self.nodes:
@@ -85,8 +242,42 @@ if __name__ == '__main__':
     avl = avl_tree()
     root = avl.generate([1, 3, 2, 8, 4, 7, 5, 13])
     avl.print_tree()
-    root_node = list(filter(lambda x: x.key == root, avl.nodes))[0]
-    avl.traverse_pre_order(root_node)
+
+    root_node = avl.get_node(root)
+    user_node = avl.get_node(8)
+
+    # traverse pre the whole tree
+    print("----- pre-order whole")
+    print(traversal_wrapper(avl.traverse_pre_order)(root_node))
+    # traverse pre the subtree
+    print("----- pre-order sub")
+    print(traversal_wrapper(avl.traverse_pre_order)(user_node))
+    # traverse in the whole tree
+    print("----- in-order whole")
+    print(traversal_wrapper(avl.traverse_in_order)(root_node))
+    # traverse post the whole tree
+    print("----- post-order whole")
+    print(traversal_wrapper(avl.traverse_post_order)(root_node))
+
+    # find min
+    print("----- min")
+    print(avl.find_min(root_node))
+    # find max
+    print("----- max")
+    print(avl.find_max(root_node))
+
+    # remove leaf
+    print("----- removing leaf")
+    avl.remove_leaf_or_ochn(13)
+    avl.print_tree()
+    # remove one child
+    print("----- removing one child node")
+    avl.remove_leaf_or_ochn(2)
+    avl.print_tree()
+    # remove root
+    print("----- removing root")
+    avl.remove_leaf_or_ochn(5)
+    avl.print_tree()
 
 # TODO:
 # tree construction: AVL with binary search, random BST
