@@ -1,3 +1,19 @@
+import trees
+
+
+def tree_interactions() -> str:
+    opt = input("What should be done with the tree provided?:\n[print in order, print pre order, delete post order, "
+                "delete elements, print subtree, balance bst]\nshorter: [IN, PRE, DELPOST, DEL, SUB, BAL].\nTo exit "
+                "type [exit] instead: ")
+    opt = opt.lower()
+
+    if opt not in ["print in order", "print pre order", "delete post order", "delete elements", "print subtree",
+                   "balance bst", "in", "pre", "delpost", "del", "sub", "bal", "exit"]:
+        print("This name is not recognised")
+        return "fail"
+    return opt
+
+
 class UserPrompt:
     def __init__(self) -> None:
         self.sorting_opt = ""
@@ -15,6 +31,8 @@ class UserPrompt:
         return True
 
     def array_options(self):
+        # array_options can be used generally as a troll handler - for example if the user was to enter a key that is
+        # actually not a number the array_options can be called to handle it until they provide the proper numbers
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
             "value. The array cannot be empty.")
@@ -46,15 +64,50 @@ class UserPrompt:
         while not options_looper:
             options_looper = self.array_options()
 
-        if self.sorting_opt == "bst":
+        if self.sorting_opt == "avl":
             # see: TODO on trees
-            print("test user BST")
-            return
+            while True:
+                opt = tree_interactions()
+                if opt == "fail":
+                    continue
+                elif opt == "exit":
+                    break
+                elif opt == "print in order" or opt == "in":
+                    None
+                elif opt == "print pre order" or opt == "pre":
+                    None
+                elif opt == "delete post order" or opt == "delpost":
+                    print("The tree has been removed. Exiting to the previous menu.")
+                    break
+                elif opt == "delete elements" or opt == "del":
+                    None
+                elif opt == "print subtree" or opt == "sub":
+                    None
+                elif opt == "balance bst" or opt == "bal":
+                    print("AVL tree is already balanced.")
 
         else:
             # see: TODO on trees
-            print("test user AVL")
+            print("test user BST")
+
             return
+
+    # finding the max and min values in the tree and printing the root->min/max value node path
+    # deleting an element of the tree by providing the amount of elements to be deleted and their keys
+    # printing all the elements in in-order
+    # printing all the elements in pre-order
+    # deleting the whole tree in post-order (printing the elements before they are deleted)
+    # printing a subtree with a root being a key chosen by the user in pre-order
+    # balancing the tree by either rotation (DSW) or by root deletion
+    # input: n-element random sequence provided by the user
+    # output: sorting time plus printing all the procedures
+    # time should be measured on: 1) structure creation 2) searching for the min. value 3) in-order printing
+
+    def avl_loop(self):
+        return
+
+    def bst_loop(self):
+        return
 
     def main_loop(self):
         while True:
@@ -62,9 +115,8 @@ class UserPrompt:
             if s == "user input":
                 self.user_loop()
                 s = input(
-                    "If you want to exit the program, enter one of the following: [q, exit, quit]. Otherwise press "
-                    "Enter to try again. ")
-                if s == "q" or s == "exit" or s == "quit":
+                    "If you want to exit the program, enter [exit]. Otherwise press Enter to try again. ")
+                if s == "exit":
                     return
 
             elif s == "testing":

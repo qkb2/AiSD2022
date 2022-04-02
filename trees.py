@@ -1,8 +1,8 @@
 import copy
 from sorts import merge_sort
 
-class node:
 
+class Node:
     def __init__(self, key: int):
         self.key = key
         self.left = None
@@ -15,9 +15,11 @@ def traversal_wrapper(func):
         func(*args, sorted_nodes, **kwargs)
 
         return sorted_nodes
+
     return wrapper
 
-class avl_tree:
+
+class AvlTree:
 
     def __init__(self):
         self.nodes = []
@@ -26,7 +28,7 @@ class avl_tree:
         # sort the array with a given sort alg
         # choose median point
         # make median point the root and split the rest
-        # procede until len = 1
+        # proceed until len = 1
 
         if len(array) == 1:
             return array[0]
@@ -38,7 +40,7 @@ class avl_tree:
         med = len(array) // 2
 
         # getting the median of the sorted array and making a node
-        nd = node(sort_arr[med])
+        nd = Node(sort_arr[med])
         sort_arr[med] = None
 
         # getting the left and right nodes
@@ -47,7 +49,6 @@ class avl_tree:
 
         self.nodes.append(nd)
         return nd.key
-
 
     def get_node(self, val: int):
         try:
@@ -70,7 +71,7 @@ class avl_tree:
 
         return f_node
 
-    def traverse_pre_order(self, nd: node, nd_arr: list):
+    def traverse_pre_order(self, nd: Node, nd_arr: list):
         # root first, then left and then right
 
         if nd:
@@ -93,7 +94,7 @@ class avl_tree:
 
             self.traverse_pre_order(right_node, nd_arr)
 
-    def traverse_in_order(self, nd: node, nd_arr: list):
+    def traverse_in_order(self, nd: Node, nd_arr: list):
         # left first, then root and then right
 
         if nd:
@@ -116,7 +117,7 @@ class avl_tree:
 
             self.traverse_in_order(right_node, nd_arr)
 
-    def traverse_post_order(self, nd: node, nd_arr: list):
+    def traverse_post_order(self, nd: Node, nd_arr: list):
         # left first, then right and then root
 
         if nd:
@@ -139,7 +140,7 @@ class avl_tree:
             # print the root
             nd_arr.append(nd.key)
 
-    def find_min(self, nd: node):
+    def find_min(self, nd: Node):
         if nd:
             print(nd.key, "-> ", end="")
             if not nd.left:
@@ -153,7 +154,7 @@ class avl_tree:
 
             return self.find_min(left_node)
 
-    def find_max(self, nd: node):
+    def find_max(self, nd: Node):
         if nd:
             print(nd.key, "-> ", end="")
             if not nd.right:
@@ -206,16 +207,17 @@ class avl_tree:
                 if p_node.right == n_key:
                     p_node.right = f_node.key
 
-        # elif value has two chldren, remove value, make neighbour (in value) a root
+        # elif value has two children, remove value, make neighbour (in value) a root
         if val == f_node.key:
             self.remove_root(f_node)
 
-    def remove_root(self, nd: node):
+    def remove_root(self, nd: Node):
         # sort nodes in-order
         # get one of the neighbours and set as root
         # remove the neighbour from its previous position
 
         srt_nd = traversal_wrapper(avl.traverse_in_order)(nd)
+        neigh = None
 
         for i in range(len(srt_nd)):
             if srt_nd[i] == nd.key:
@@ -232,14 +234,14 @@ class avl_tree:
             print(k.key, k.left, k.right)
 
 
-class tree_handler:
+class TreeHandler:
 
     def generate_tree(self, typ, array):
         None
 
 
 if __name__ == '__main__':
-    avl = avl_tree()
+    avl = AvlTree()
     root = avl.generate([1, 3, 2, 8, 4, 7, 5, 13])
     avl.print_tree()
 
@@ -279,6 +281,7 @@ if __name__ == '__main__':
     avl.remove_leaf_or_ochn(5)
     avl.print_tree()
 
+
 # TODO:
 # tree construction: AVL with binary search, random BST
 # the following procedures are to be implemented for both tree types:
@@ -293,4 +296,5 @@ if __name__ == '__main__':
 # output: sorting time plus printing all the procedures
 # time should be measured on: 1) structure creation 2) searching for the min. value 3) in-order printing
 # for BST time should also be measured on BST balancing
-# testing: one point on a plot is an avg of 10 samples, plot should have at least 10 values of n, SD should also be provided
+# testing: one point on a plot is an avg of 10 samples
+# plot should have at least 10 values of n, SD should also be provided
