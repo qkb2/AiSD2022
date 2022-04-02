@@ -19,12 +19,22 @@ def traversal_wrapper(func):
     return wrapper
 
 
+def calc_hei_wrapper(func):
+    def wrapper(*args, **kwargs):
+        height = []
+        func(*args, height, **kwargs)
+
+        return sum(height)
+
+    return wrapper
+
+
 class AvlTree:
 
     def __init__(self):
         self.nodes = []
 
-    def generate(self, array: list):
+    def generate_avl(self, array: list):
         # sort the array with a given sort alg
         # choose median point
         # make median point the root and split the rest
@@ -44,11 +54,73 @@ class AvlTree:
         sort_arr[med] = None
 
         # getting the left and right nodes
-        nd.left = self.generate(sort_arr[:med])
-        nd.right = self.generate(sort_arr[med + 1 if len(array) > 2 else med:])
+        nd.left = self.generate_avl(sort_arr[:med])
+        nd.right = self.generate_avl(sort_arr[med + 1 if len(array) > 2 else med:])
 
         self.nodes.append(nd)
         return nd.key
+
+    def calc_height(self, nd: Node, height: list):
+
+        if nd:
+            height.append(1)
+
+            left_node = self.get_node(nd.left)
+            if not left_node:
+                right_node = self.get_node(nd.right)
+                if not right_node:
+                    if nd.left or nd.right:
+                        height.append(1)
+                else:
+                    self.calc_height(right_node, height)
+            else:
+                self.calc_height(left_node, height)
+
+    def calc_balance(self, nd: Node):
+        # if leaf then balance 0
+        # if one child then balance 1
+        # if two children then balance 0
+        # if subtree than calc height
+
+        left_node = self.get_node(nd.left)
+        right_node = self.get_node(nd.right)
+
+        l_h = 0
+        r_h = 0
+        if not left_node:
+            if nd.left:
+                l_h += 1
+        else:
+            l_h += calc_hei_wrapper(self.calc_height)(left_node)
+
+        if not right_node:
+            if nd.right:
+                r_h += 1
+        else:
+            r_h += calc_hei_wrapper(self.calc_height)(right_node)
+
+        return abs(l_h - r_h)
+
+    def is_balanced(self):
+        # check the factor of balance for each root-node
+        # (diff between the height of the left subtree and the h of the right sbt)
+        # if some factor > 1 then not balanced
+
+        for nd in self.nodes:
+            nd_balance = self.calc_balance(nd)
+            print(nd.key, ":", nd_balance)
+            if nd_balance > 1:
+                return False
+
+        return True
+
+    def balance(self, nd: Node):
+        # sort the nodes in in-order order
+        # feed the sorted array to generate_avl function
+
+        srt_nd = traversal_wrapper(avl.traverse_in_order)(nd)
+        self.nodes = []
+        self.generate_avl(srt_nd)
 
     def get_node(self, val: int):
         try:
@@ -207,6 +279,17 @@ class AvlTree:
                 if p_node.right == n_key:
                     p_node.right = f_node.key
 
+            # if value is leaf that was a root
+            elif not f_node.right and not f_node.left:
+                n_key = copy.deepcopy(f_node.key)
+                self.nodes.remove(f_node)
+                p_node = self.find_node(n_key)
+
+                if p_node.left == n_key:
+                    p_node.left = None
+                if p_node.right == n_key:
+                    p_node.right = None
+
         # elif value has two children, remove value, make neighbour (in value) a root
         if val == f_node.key:
             self.remove_root(f_node)
@@ -234,6 +317,32 @@ class AvlTree:
             print(k.key, k.left, k.right)
 
 
+class BstRandom(AvlTree):
+
+    def __init__(self):
+        super().__init__()
+
+    def generate_random(self, array: list):
+        # iterate through array elements
+        # build the tree one by one
+
+        for i in range(len(array)):
+            if len(self.nodes) == 0:
+                nd = Node(array[i])
+                self.nodes.append(nd)
+            else:
+                for n in self.nodes:
+                    if not n.left:
+                        if array[i] < n.key:
+                            n.left = array[i]
+                    else:
+                        if array[i] < n.left:
+                            nd = Node(n.left)
+                            if not self.nodes.__contains__(nd):
+                                nd.left = array[i]
+                                self.nodes.append(nd)
+
+
 class TreeHandler:
 
     def generate_tree(self, typ, array):
@@ -242,11 +351,15 @@ class TreeHandler:
 
 if __name__ == '__main__':
     avl = AvlTree()
-    root = avl.generate([1, 3, 2, 8, 4, 7, 5, 13])
+    root = avl.generate_avl([1, 3, 2, 8, 4, 7, 5, 13])
     avl.print_tree()
 
     root_node = avl.get_node(root)
     user_node = avl.get_node(8)
+
+    # check if balanced
+    print("----- is balanced")
+    print(avl.is_balanced())
 
     # traverse pre the whole tree
     print("----- pre-order whole")
@@ -271,15 +384,28 @@ if __name__ == '__main__':
     # remove leaf
     print("----- removing leaf")
     avl.remove_leaf_or_ochn(13)
+    avl.remove_leaf_or_ochn(7)
+    avl.remove_leaf_or_ochn(8)
     avl.print_tree()
     # remove one child
-    print("----- removing one child node")
-    avl.remove_leaf_or_ochn(2)
-    avl.print_tree()
+    # print("----- removing one child node")
+    # avl.remove_leaf_or_ochn(2)
+    # avl.print_tree()
     # remove root
-    print("----- removing root")
-    avl.remove_leaf_or_ochn(5)
+    # print("----- removing root")
+    # avl.remove_leaf_or_ochn(5)
+    # avl.print_tree()
+
+    # check if balanced
+    print("----- is balanced")
+    print(avl.is_balanced())
+    # balance tree
+    print("----- balancing tree")
+    avl.balance(root_node)
     avl.print_tree()
+    # check if balanced
+    print("----- is balanced")
+    print(avl.is_balanced())
 
 
 # TODO:
