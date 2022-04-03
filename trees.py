@@ -1,4 +1,5 @@
 import copy
+import time
 from sorts import merge_sort
 
 
@@ -9,6 +10,7 @@ class Node:
         self.right = None
 
 
+# util functions
 def traversal_wrapper(func):
     def wrapper(*args, **kwargs):
         sorted_nodes = []
@@ -33,6 +35,7 @@ class AvlTree:
 
     def __init__(self):
         self.nodes = []
+        self.root = None
 
     def generate_avl(self, array: list):
         # sort the array with a given sort alg
@@ -45,8 +48,8 @@ class AvlTree:
 
         # sorting array if not sorted
         sort_arr = array
-        if sort_arr != sorted(array):
-            sort_arr = merge_sort(array)[::-1]
+        # if sort_arr != sorted(array):
+            # sort_arr = merge_sort(array)[::-1]
         med = len(array) // 2
 
         # getting the median of the sorted array and making a node
@@ -58,7 +61,12 @@ class AvlTree:
         nd.right = self.generate_avl(sort_arr[med + 1 if len(array) > 2 else med:])
 
         self.nodes.append(nd)
+
+        self.root = nd
         return nd.key
+
+    def get_root(self):
+        return self.root
 
     def calc_height(self, nd: Node, height: list):
 
@@ -108,17 +116,16 @@ class AvlTree:
 
         for nd in self.nodes:
             nd_balance = self.calc_balance(nd)
-            print(nd.key, ":", nd_balance)
             if nd_balance > 1:
                 return False
 
         return True
 
-    def balance(self, nd: Node):
+    def balance(self):
         # sort the nodes in in-order order
         # feed the sorted array to generate_avl function
 
-        srt_nd = traversal_wrapper(avl.traverse_in_order)(nd)
+        srt_nd = traversal_wrapper(self.traverse_in_order)(self.get_root())
         self.nodes = []
         self.generate_avl(srt_nd)
 
@@ -212,33 +219,39 @@ class AvlTree:
             # print the root
             nd_arr.append(nd.key)
 
-    def find_min(self, nd: Node):
-        if nd:
-            print(nd.key, "-> ", end="")
-            if not nd.left:
-                mn = nd.key
+    def find_min(self, nd: Node = None):
+
+        if not nd:
+            nd = self.root
+
+        print(nd.key, "-> ", end="")
+        if not nd.left:
+            mn = nd.key
+            return mn
+        left_node = self.get_node(nd.left)
+        if not left_node:
+            if nd.left:
+                mn = nd.left
                 return mn
-            left_node = self.get_node(nd.left)
-            if not left_node:
-                if nd.left:
-                    mn = nd.left
-                    return mn
 
-            return self.find_min(left_node)
+        return self.find_min(left_node)
 
-    def find_max(self, nd: Node):
-        if nd:
-            print(nd.key, "-> ", end="")
-            if not nd.right:
-                mn = nd.key
+    def find_max(self, nd: Node = None):
+
+        if not nd:
+            nd = self.root
+
+        print(nd.key, "-> ", end="")
+        if not nd.right:
+            mn = nd.key
+            return mn
+        right_node = self.get_node(nd.right)
+        if not right_node:
+            if nd.right:
+                mn = nd.right
                 return mn
-            right_node = self.get_node(nd.right)
-            if not right_node:
-                if nd.right:
-                    mn = nd.right
-                    return mn
 
-            return self.find_max(right_node)
+        return self.find_max(right_node)
 
     def remove_leaf_or_ochn(self, val: int):
         # locate the value
@@ -299,7 +312,7 @@ class AvlTree:
         # get one of the neighbours and set as root
         # remove the neighbour from its previous position
 
-        srt_nd = traversal_wrapper(avl.traverse_in_order)(nd)
+        srt_nd = traversal_wrapper(self.traverse_in_order)(nd)
         neigh = None
 
         for i in range(len(srt_nd)):
@@ -326,86 +339,218 @@ class BstRandom(AvlTree):
         # iterate through array elements
         # build the tree one by one
 
+        # make firts element root
+        # then put next elements in tree by looping
+        # all the nodes, and placing it in left or right
+        # if it doesnt exist in the tree yet
+
         for i in range(len(array)):
             if len(self.nodes) == 0:
                 nd = Node(array[i])
                 self.nodes.append(nd)
+                root_nd = nd
             else:
                 for n in self.nodes:
-                    if not n.left:
+                    if not self.find_node(array[i]):
                         if array[i] < n.key:
-                            n.left = array[i]
-                    else:
-                        if array[i] < n.left:
-                            nd = Node(n.left)
-                            if not self.nodes.__contains__(nd):
-                                nd.left = array[i]
-                                self.nodes.append(nd)
+                            if not n.left:
+                                n.left = array[i]
+                            else:
+                                if array[i] < n.left:
+                                    if not self.get_node(n.left):
+                                        nd = Node(n.left)
+                                        nd.left = array[i]
+                                        self.nodes.append(nd)
+                                elif array[i] > n.left:
+                                    if not self.get_node(n.left):
+                                        nd = Node(n.left)
+                                        nd.right = array[i]
+                                        self.nodes.append(nd)
+                        elif array[i] > n.key:
+                            if not n.right:
+                                n.right = array[i]
+                            else:
+                                if array[i] < n.right:
+                                    if not self.get_node(n.right):
+                                        nd = Node(n.right)
+                                        nd.left = array[i]
+                                        self.nodes.append(nd)
+                                elif array[i] > n.right:
+                                    if not self.get_node(n.right):
+                                        nd = Node(n.right)
+                                        nd.right = array[i]
+                                        self.nodes.append(nd)
+
+        self.root = root_nd
+        return root_nd.key
 
 
 class TreeHandler:
 
-    def generate_tree(self, typ, array):
-        None
+    def generate_tree(self, avl: bool, array: list):
+
+        if avl:
+            tree = AvlTree()
+            sort_arr = array
+            if sort_arr != sorted(array):
+                sort_arr = merge_sort(array)[::-1]
+            start_time = time.perf_counter()
+            tree.generate_avl(sort_arr)
+            stop_time = time.perf_counter()
+        else:
+            tree = BstRandom()
+            start_time = time.perf_counter()
+            tree.generate_random(array)
+            stop_time = time.perf_counter()
+
+        return tree, stop_time - start_time
+
+    def get_min_time(self, tree):
+
+        start_time = time.perf_counter()
+        print(tree.find_min())
+        stop_time = time.perf_counter()
+
+        return stop_time - start_time
+
+    def get_in_order_time(self, tree):
+
+        start_time = time.perf_counter()
+        print(traversal_wrapper(tree.traverse_in_order)(tree.get_root()))
+        stop_time = time.perf_counter()
+
+        return stop_time - start_time
+
+    def get_balancing_time(self, tree):
+
+        start_time = time.perf_counter()
+        tree.balance()
+        stop_time = time.perf_counter()
+
+        return stop_time - start_time
 
 
 if __name__ == '__main__':
-    avl = AvlTree()
-    root = avl.generate_avl([1, 3, 2, 8, 4, 7, 5, 13])
-    avl.print_tree()
 
-    root_node = avl.get_node(root)
-    user_node = avl.get_node(8)
+    tree_hand = TreeHandler()
 
-    # check if balanced
-    print("----- is balanced")
-    print(avl.is_balanced())
+    avl_g, avl_t = tree_hand.generate_tree(True, [1, 3, 2, 8, 4, 7, 5, 13])
+    bst_g, bst_t = tree_hand.generate_tree(False, [1, 3, 2, 8, 4, 7, 5, 13])
 
-    # traverse pre the whole tree
-    print("----- pre-order whole")
-    print(traversal_wrapper(avl.traverse_pre_order)(root_node))
-    # traverse pre the subtree
-    print("----- pre-order sub")
-    print(traversal_wrapper(avl.traverse_pre_order)(user_node))
-    # traverse in the whole tree
-    print("----- in-order whole")
-    print(traversal_wrapper(avl.traverse_in_order)(root_node))
-    # traverse post the whole tree
-    print("----- post-order whole")
-    print(traversal_wrapper(avl.traverse_post_order)(root_node))
+    print("----- avl tree, time: ", avl_t)
+    avl_g.print_tree()
 
-    # find min
-    print("----- min")
-    print(avl.find_min(root_node))
-    # find max
-    print("----- max")
-    print(avl.find_max(root_node))
+    print("----- bst tree, time: ", bst_t)
+    bst_g.print_tree()
 
-    # remove leaf
-    print("----- removing leaf")
-    avl.remove_leaf_or_ochn(13)
-    avl.remove_leaf_or_ochn(7)
-    avl.remove_leaf_or_ochn(8)
-    avl.print_tree()
-    # remove one child
-    # print("----- removing one child node")
-    # avl.remove_leaf_or_ochn(2)
+    print("")
+    avl_m_t = tree_hand.get_min_time(avl_g)
+    print("----- avl find min time: ", avl_m_t)
+    bst_m_t = tree_hand.get_min_time(bst_g)
+    print("----- bst find min time: ", bst_m_t)
+
+    print("")
+    avl_i_t = tree_hand.get_in_order_time(avl_g)
+    print("----- avl in-order time: ", avl_i_t)
+    bst_i_t = tree_hand.get_in_order_time(bst_g)
+    print("----- bst in-order time: ", bst_i_t)
+
+    print("")
+    avl_b_t = tree_hand.get_balancing_time(avl_g)
+    bst_b_t = tree_hand.get_balancing_time(bst_g)
+    print("----- avl balancing time: ", avl_b_t)
+    print("----- bst balancing time: ", bst_b_t)
+
+    # avl = AvlTree()
+    # root = avl.generate_avl([1, 3, 2, 8, 4, 7, 5, 13])
     # avl.print_tree()
-    # remove root
-    # print("----- removing root")
-    # avl.remove_leaf_or_ochn(5)
-    # avl.print_tree()
+    # print("----- root is: ", root)
 
-    # check if balanced
-    print("----- is balanced")
-    print(avl.is_balanced())
-    # balance tree
-    print("----- balancing tree")
-    avl.balance(root_node)
-    avl.print_tree()
-    # check if balanced
-    print("----- is balanced")
-    print(avl.is_balanced())
+    # user_node = avl.get_node(8)
+
+    # # check if balanced
+    # print("----- is balanced")
+    # print(avl.is_balanced())
+
+    # # traverse pre the whole tree
+    # print("----- pre-order whole")
+    # print(traversal_wrapper(avl.traverse_pre_order)(avl.get_root()))
+    # # traverse pre the subtree
+    # print("----- pre-order sub")
+    # print(traversal_wrapper(avl.traverse_pre_order)(user_node))
+    # # traverse in the whole tree
+    # print("----- in-order whole")
+    # print(traversal_wrapper(avl.traverse_in_order)(avl.get_root()))
+    # # traverse post the whole tree
+    # print("----- post-order whole")
+    # print(traversal_wrapper(avl.traverse_post_order)(avl.get_root()))
+
+    # # find min
+    # print("----- min")
+    # print(avl.find_min())
+    # # find max
+    # print("----- max")
+    # print(avl.find_max())
+
+    # # remove leaf
+    # print("----- removing leaf")
+    # avl.remove_leaf_or_ochn(13)
+    # avl.remove_leaf_or_ochn(7)
+    # avl.remove_leaf_or_ochn(8)
+    # avl.print_tree()
+    # # remove one child
+    # # print("----- removing one child node")
+    # # avl.remove_leaf_or_ochn(2)
+    # # avl.print_tree()
+    # # remove root
+    # # print("----- removing root")
+    # # avl.remove_leaf_or_ochn(5)
+    # # avl.print_tree()
+
+    # # check if balanced
+    # print("----- is balanced")
+    # print(avl.is_balanced())
+    # # balance tree
+    # print("----- balancing tree")
+    # avl.balance()
+    # avl.print_tree()
+    # # check if balanced
+    # print("----- is balanced")
+    # print(avl.is_balanced())
+
+    # # generating random bst
+    # print("----- random bst")
+    # bst = BstRandom()
+    # bst_root = bst.generate_random([1, 3, 2, 8, 4, 7, 5, 13])
+    # bst.print_tree()
+    # print("----- root is: ", bst_root)
+
+    # # traverse pre the whole tree
+    # print("----- pre-order whole")
+    # print(traversal_wrapper(bst.traverse_pre_order)(bst.get_root()))
+    # # traverse pre the subtree
+    # print("----- pre-order sub")
+    # print(traversal_wrapper(bst.traverse_pre_order)(bst.get_node(8)))
+    # # traverse in the whole tree
+    # print("----- in-order whole")
+    # print(traversal_wrapper(bst.traverse_in_order)(bst.get_root()))
+    # # traverse post the whole tree
+    # print("----- post-order whole")
+    # print(traversal_wrapper(bst.traverse_post_order)(bst.get_root()))
+
+    # # balancing random bst
+    # print("----- random bst balanced")
+    # print(bst.is_balanced())
+    # bst.balance()
+    # bst.print_tree()
+    # print(bst.is_balanced())
+
+    # # find min
+    # print("----- min")
+    # print(bst.find_min())
+    # # find max
+    # print("----- max")
+    # print(bst.find_max())
 
 
 # TODO:
