@@ -1,6 +1,6 @@
 import copy
 import time
-from old_utilities import merge_sort # this one sorts normally (1,2...)
+from old_utilities import merge_sort  # this one sorts normally (1,2...)
 
 
 class Node:
@@ -49,7 +49,7 @@ class AvlTree:
         # sorting array if not sorted
         sort_arr = array
         # if sort_arr != sorted(array):
-            # sort_arr = merge_sort(array)
+        # sort_arr = merge_sort(array)
         med = len(array) // 2
 
         # getting the median of the sorted array and making a node
@@ -329,11 +329,13 @@ class AvlTree:
         for k in self.nodes:
             print(k.key, k.left, k.right)
 
-    def remove_any_node(self, nd: Node):
-        if nd.key == self.root.key:
-            self.remove_root(nd)
+    def remove_any_node(self, key: int):
+        if key == self.root.key:
+            self.remove_root(self.get_root())
         else:
-            self.remove_leaf_or_ochn(nd.key) # TODO: something with remove root and remove leaf having different arg types
+            self.remove_leaf_or_ochn(key)
+            # TODO: something with remove root and remove leaf having different arg types
+
 
 class BstRandom(AvlTree):
 
@@ -344,11 +346,12 @@ class BstRandom(AvlTree):
         # iterate through array elements
         # build the tree one by one
 
-        # make firts element root
+        # make first element root
         # then put next elements in tree by looping
         # all the nodes, and placing it in left or right
-        # if it doesnt exist in the tree yet
+        # if it doesn't exist in the tree yet
 
+        root_nd = None
         for i in range(len(array)):
             if len(self.nodes) == 0:
                 nd = Node(array[i])
@@ -436,7 +439,6 @@ class TreeHandler:
 
 
 if __name__ == '__main__':
-
     tree_hand = TreeHandler()
 
     avl_g, avl_t = tree_hand.generate_tree(True, [1, 3, 2, 8, 4, 7, 5, 13])
@@ -556,7 +558,6 @@ if __name__ == '__main__':
     # # find max
     # print("----- max")
     # print(bst.find_max())
-
 
 # TODO:
 # tree construction: AVL with binary search, random BST

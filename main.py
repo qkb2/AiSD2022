@@ -2,19 +2,19 @@ import trees
 
 
 def tree_interactions() -> str:
-    opt = input("What should be done with the tree provided?:\n[find min, find max, print in order, print pre order," 
-                " del post order, remove elements, print subtree, balance bst]\nshorter: [MIN, MAX, IN, PRE, "
-                "DEL, REM, SUB, BAL].\nTo exit type [exit] instead: ")
+    opt = input("What should be done with the tree provided?:\n[find min, find max, print in order, print pre order, "
+                "del post order, remove elements, print subtree, balance bst]\nshorter: [MIN, MAX, IN, PRE, DEL, REM, "
+                "SUB, BAL].\nTo exit type [exit] instead: ")
     opt = opt.lower()
 
-    if opt not in ["find min, find max, print in order", "print pre order", "delete post order", "remove elements", 
-    "print subtree", "balance bst", "min", "max", "in", "pre", "del", "rem", "sub", "bal", "exit"]:
+    if opt not in ["find min, find max, print in order", "print pre order", "delete post order", "remove elements",
+                   "print subtree", "balance bst", "min", "max", "in", "pre", "del", "rem", "sub", "bal", "exit"]:
         print("This name is not recognised")
         return "fail"
     return opt
 
 
-def tree_options(tree: trees.AvlTree, tree_hand: trees.TreeHandler, tree_type: str) -> None:
+def tree_options(tree: trees.AvlTree, tree_hand: trees.TreeHandler, is_avl: bool) -> None:
     while True:
         opt = tree_interactions()
         # tree handler returns float val. of time for all its methods besides the tree generator
@@ -23,21 +23,22 @@ def tree_options(tree: trees.AvlTree, tree_hand: trees.TreeHandler, tree_type: s
         elif opt == "exit":
             return
         elif opt == "find min" or opt == "min":
-            t = tree_hand.get_min_time()
+            t = tree_hand.get_min_time(tree)
             print("Time taken: {}".format(t))
         elif opt == "find max" or opt == "max":
             tree.find_max()
         elif opt == "print in order" or opt == "in":
             t = tree_hand.get_in_order_time(tree)
+            print("Time taken: {}".format(t))
         elif opt == "print pre order" or opt == "pre":
             print(trees.traversal_wrapper(tree.traverse_pre_order)(tree.get_root()))
         elif opt == "delete post order" or opt == "del":
-            t = 0 # TODO: apply the method for post-order deletion
+            t = 0  # TODO: apply the method for post-order deletion
             print("The tree has been removed in {} seconds. Exiting to the previous menu.".format(t))
             return
         elif opt == "remove elements" or opt == "rem":
             key = int(input())
-            tree.remove_any_node() 
+            tree.remove_any_node(key)
             # TODO: checker for numbers, actually get some use out of node remover
             # should probably take int args, not nodes
         elif opt == "print subtree" or opt == "sub":
@@ -45,7 +46,11 @@ def tree_options(tree: trees.AvlTree, tree_hand: trees.TreeHandler, tree_type: s
             # TODO: checker for numbers
             print(trees.traversal_wrapper(tree.traverse_pre_order)(key))
         elif opt == "balance bst" or opt == "bal":
-            print("AVL tree is already balanced.")
+            if is_avl:
+                print("AVL tree is already balanced.")
+            else:
+                t = tree_hand.get_balancing_time(tree)
+                print("Balanced the BST in {} seconds.".format(t))
 
 
 class UserPrompt:
@@ -98,16 +103,15 @@ class UserPrompt:
         while not options_looper:
             options_looper = self.array_options()
 
-
         tree_hand = trees.TreeHandler()
         if self.sorting_opt == "avl":
-            tree, t = tree_hand.generate_tree(1, self.sorting_array) # 1 means AVL
+            tree, t = tree_hand.generate_tree(True, self.sorting_array)  # True means AVL
             print("AVL Tree was created in {} seconds.".format(t))
-            tree_options(tree, tree_hand, "avl")
+            tree_options(tree, tree_hand, True)
         else:
-            tree, t = tree_hand.generate_tree(0, self.sorting_array) # 0 means BST
+            tree, t = tree_hand.generate_tree(False, self.sorting_array)  # False means BST
             print("BST Tree was created in {} seconds.".format(t))
-            tree_options(tree, tree_hand, "bst")
+            tree_options(tree, tree_hand, False)
 
     # finding the max and min values in the tree and printing the root->min/max value node path
     # deleting an element of the tree by providing the amount of elements to be deleted and their keys
@@ -119,8 +123,6 @@ class UserPrompt:
     # input: n-element random sequence provided by the user
     # output: sorting time plus printing all the procedures
     # time should be measured on: 1) structure creation 2) searching for the min. value 3) in-order printing
-
-
 
     def main_loop(self):
         while True:
