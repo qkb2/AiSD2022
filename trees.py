@@ -1,6 +1,6 @@
 import copy
 import time
-from sorts import merge_sort
+from old_utilities import merge_sort # this one sorts normally (1,2...)
 
 
 class Node:
@@ -49,7 +49,7 @@ class AvlTree:
         # sorting array if not sorted
         sort_arr = array
         # if sort_arr != sorted(array):
-            # sort_arr = merge_sort(array)[::-1]
+            # sort_arr = merge_sort(array)
         med = len(array) // 2
 
         # getting the median of the sorted array and making a node
@@ -329,6 +329,11 @@ class AvlTree:
         for k in self.nodes:
             print(k.key, k.left, k.right)
 
+    def remove_any_node(self, nd: Node):
+        if nd.key == self.root.key:
+            self.remove_root(nd)
+        else:
+            self.remove_leaf_or_ochn(nd.key) # TODO: something with remove root and remove leaf having different arg types
 
 class BstRandom(AvlTree):
 
@@ -393,7 +398,7 @@ class TreeHandler:
             tree = AvlTree()
             sort_arr = array
             if sort_arr != sorted(array):
-                sort_arr = merge_sort(array)[::-1]
+                sort_arr = merge_sort(array)
             start_time = time.perf_counter()
             tree.generate_avl(sort_arr)
             stop_time = time.perf_counter()
