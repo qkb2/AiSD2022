@@ -121,6 +121,65 @@ class AvlTree:
 
         return True
 
+    def rotate_right(self, nd: Node):
+        # if node has left child then make left child its parent
+        # else if has parent then make the node its parents right
+
+        if nd:
+            left_node = self.get_node(nd.left)
+
+            if not left_node:
+                if nd.left:
+                    n_left = copy.deepcopy(nd.left)
+                    n_key = copy.deepcopy(nd.key)
+                    nd.left = None
+                    al_nd = self.find_node(n_left)
+                    if al_nd:
+                        if al_nd.right:
+                            nd.key = al_nd.right
+                    else:
+                        nd.key = n_left
+
+                    if nd.right:
+                        nn = Node(n_key)
+                        nn.right = nd.right
+                        nd.right = n_key
+                        self.nodes.append(nn)
+                    else:
+                        nd.right = n_key
+            else:
+                self.rotate_right(left_node)
+
+            right_node = self.get_node(nd.right)
+
+            if not right_node:
+                if nd.left:
+                    n_left = copy.deepcopy(nd.left)
+                    n_key = copy.deepcopy(nd.key)
+                    nd.left = None
+                    al_nd = self.find_node(n_left)
+                    if al_nd:
+                        if al_nd.right:
+                            nd.key = al_nd.right
+                    else:
+                        nd.key = n_left
+
+                    if nd.right:
+                        nn = Node(n_key)
+                        nn.right = nd.right
+                        nd.right = n_key
+                        self.nodes.append(nn)
+                    else:
+                        nd.right = n_key
+            else:
+                self.rotate_right(right_node)
+
+    def balance_dsw(self):
+        # rotate all nodes right (in-order)
+        # rotate left until tree balanced
+
+        self.rotate_right(self.get_root())
+
     def balance(self):
         # sort the nodes in in-order order
         # feed the sorted array to generate_avl function
@@ -219,6 +278,32 @@ class AvlTree:
             # print the root
             nd_arr.append(nd.key)
 
+    def remove_whole_post_order(self, nd: Node):
+        # left first, then right and then root
+
+        if nd:
+            # find and print the left node if exists
+            left_node = self.get_node(nd.left)
+            if not left_node:
+                if nd.left:
+                    print(nd.left)
+                    self.remove_leaf_or_ochn(nd.left)
+
+            self.remove_whole_post_order(left_node)
+
+            # find and print the right node if exists
+            right_node = self.get_node(nd.right)
+            if not right_node:
+                if nd.right:
+                    print(nd.right)
+                    self.remove_leaf_or_ochn(nd.right)
+
+            self.remove_whole_post_order(right_node)
+
+            # print the root
+            print(nd.key)
+            self.remove_leaf_or_ochn(nd.key)
+
     def find_min(self, nd: Node = None):
 
         if not nd:
@@ -276,10 +361,11 @@ class AvlTree:
                 f_node.left = None
                 p_node = self.find_node(n_key)
 
-                if p_node.left == n_key:
-                    p_node.left = f_node.key
-                if p_node.right == n_key:
-                    p_node.right = f_node.key
+                if p_node:
+                    if p_node.left == n_key:
+                        p_node.left = f_node.key
+                    if p_node.right == n_key:
+                        p_node.right = f_node.key
 
             elif f_node.right and not f_node.left:
                 n_key = copy.deepcopy(f_node.key)
@@ -287,10 +373,11 @@ class AvlTree:
                 f_node.right = None
                 p_node = self.find_node(n_key)
 
-                if p_node.left == n_key:
-                    p_node.left = f_node.key
-                if p_node.right == n_key:
-                    p_node.right = f_node.key
+                if p_node:
+                    if p_node.left == n_key:
+                        p_node.left = f_node.key
+                    if p_node.right == n_key:
+                        p_node.right = f_node.key
 
             # if value is leaf that was a root
             elif not f_node.right and not f_node.left:
@@ -298,10 +385,11 @@ class AvlTree:
                 self.nodes.remove(f_node)
                 p_node = self.find_node(n_key)
 
-                if p_node.left == n_key:
-                    p_node.left = None
-                if p_node.right == n_key:
-                    p_node.right = None
+                if p_node:
+                    if p_node.left == n_key:
+                        p_node.left = None
+                    if p_node.right == n_key:
+                        p_node.right = None
 
         # elif value has two children, remove value, make neighbour (in value) a root
         if val == f_node.key:
@@ -326,15 +414,10 @@ class AvlTree:
         nd.key = neigh
 
     def print_tree(self):
+        if len(self.nodes) == 0:
+            print("Tree empty.")
         for k in self.nodes:
             print(k.key, k.left, k.right)
-
-    def remove_any_node(self, key: int):
-        if key == self.root.key:
-            self.remove_root(self.get_root())
-        else:
-            self.remove_leaf_or_ochn(key)
-            # TODO: something with remove root and remove leaf having different arg types
 
 
 class BstRandom(AvlTree):
@@ -450,23 +533,33 @@ if __name__ == '__main__':
     print("----- bst tree, time: ", bst_t)
     bst_g.print_tree()
 
-    print("")
-    avl_m_t = tree_hand.get_min_time(avl_g)
-    print("----- avl find min time: ", avl_m_t)
-    bst_m_t = tree_hand.get_min_time(bst_g)
-    print("----- bst find min time: ", bst_m_t)
+    print("----- rotate right")
+    avl_g.balance_dsw()
+    avl_g.print_tree()
 
-    print("")
-    avl_i_t = tree_hand.get_in_order_time(avl_g)
-    print("----- avl in-order time: ", avl_i_t)
-    bst_i_t = tree_hand.get_in_order_time(bst_g)
-    print("----- bst in-order time: ", bst_i_t)
+    # print("----- removing whole tree post-order")
+    # avl_g.remove_whole_post_order(avl_g.get_root())
+    # avl_g.print_tree()
 
-    print("")
-    avl_b_t = tree_hand.get_balancing_time(avl_g)
-    bst_b_t = tree_hand.get_balancing_time(bst_g)
-    print("----- avl balancing time: ", avl_b_t)
-    print("----- bst balancing time: ", bst_b_t)
+    # print("")
+    # avl_m_t = tree_hand.get_min_time(avl_g)
+    # print("----- avl find min time: ", avl_m_t)
+    # bst_m_t = tree_hand.get_min_time(bst_g)
+    # print("----- bst find min time: ", bst_m_t)
+
+    # print("")
+    # avl_i_t = tree_hand.get_in_order_time(avl_g)
+    # print("----- avl in-order time: ", avl_i_t)
+    # bst_i_t = tree_hand.get_in_order_time(bst_g)
+    # print("----- bst in-order time: ", bst_i_t)
+
+    # print("")
+    # avl_b_t = tree_hand.get_balancing_time(avl_g)
+    # bst_b_t = tree_hand.get_balancing_time(bst_g)
+    # print("----- avl balancing time: ", avl_b_t)
+    # print("----- bst balancing time: ", bst_b_t)
+
+    #######
 
     # avl = AvlTree()
     # root = avl.generate_avl([1, 3, 2, 8, 4, 7, 5, 13])
