@@ -26,7 +26,7 @@ class UserPrompt:
         # array_options can be used generally as a troll handler
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
-            "value. The array cannot be empty.")
+            "value. The array cannot be empty. Choose unique key values.")
         array = input(
             "Please enter your numbers as a one line, one whitespace between each of them: ").split()
 
@@ -43,6 +43,12 @@ class UserPrompt:
         except ValueError:
             print("The input seems to include non-numbers")
             return False
+
+        for el in array:
+            x = array.count(el)
+            if x != 1:
+                print("Keys are not unique.")
+                return False
 
         if main_selector:
             self.main_array = list(map(abs, array))
@@ -92,14 +98,14 @@ class UserPrompt:
                     x = self.array_options()
                 for key in self.helper_array:
                     if key in self.main_array:
-                        tree.remove_any_node(key)
+                        tree.remove_leaf_or_ochn(key)
                         print(trees.traversal_wrapper(
                             tree.traverse_pre_order)(tree.get_root()))
                         self.main_array.remove(key)
                     else:
                         print("There is no node {} in this tree.".format(key))
                 continue
-                # TODO: checker for numbers, actually get some use out of node remover
+                # DONE: checker for numbers, actually get some use out of node remover
                 # should probably take int args, not nodes
             elif opt == "print subtree" or opt == "sub":
                 s = input("Enter a correct key: ")

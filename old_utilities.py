@@ -5,7 +5,7 @@ def decreasing_generator(n: int, k: int) -> list:
     random.seed()
     random_list = [random.randint(9 * k // 10, k)]
     for i in range(0, n - 1):
-        random_list.append(random_list[i] - random.randint(0, k // n))
+        random_list.append(random_list[i] - random.randint(1, k // n))
 
     return random_list
 
