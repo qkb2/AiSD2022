@@ -19,7 +19,7 @@ def test_wrapper(is_avl: bool, n: int, i):
     if is_avl:
         bal_time = 0
     else:
-        bal_time = tree_hand.get_balancing_time(tree)
+        bal_time = tree_hand.get_balancing_rmr_time(tree)
     return gen_time, search_time, trav_time, bal_time
 
 

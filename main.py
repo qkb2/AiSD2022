@@ -1,5 +1,5 @@
 import trees
-
+import tests
 
 class UserPrompt:
     def __init__(self) -> None:
@@ -59,8 +59,8 @@ class UserPrompt:
     def tree_functions(self, tree: trees.AvlTree) -> None:
         while True:
             opt = input("What should be done with the tree provided?:\n[find min, find max, print in order, print pre "
-                        "order, del post order, remove elements, print subtree, balance bst]\nshorter: [MIN, MAX, IN, "
-                        "PRE, DEL, REM, SUB, BAL].\nTo exit type [exit] instead: ")
+                        "order, del post order, remove elements, print subtree, balance bst].\nShorter: [MIN, MAX, IN, "
+                        "PRE, DEL, REM, SUB, BAL]. To exit type [exit] instead: ")
             opt = opt.lower()
 
             if opt not in ["find min", "find max", "print in order", "print pre order", "delete post order",
@@ -88,9 +88,8 @@ class UserPrompt:
                     tree.traverse_pre_order)(tree.get_root()))
                 continue
             elif opt == "delete post order" or opt == "del":
-                t = 0  # TODO: apply the method for post-order deletion
-                print(
-                    "The tree has been removed in {} seconds. Exiting to the previous menu.".format(t))
+                tree.remove_whole_post_order(tree.get_root())
+                print("The tree has been removed. Exiting to the previous menu.")
                 return
             elif opt == "remove elements" or opt == "rem":
                 x = self.array_options()
@@ -127,7 +126,7 @@ class UserPrompt:
                 if self.is_avl:
                     print("AVL tree is already balanced.")
                 else:
-                    t = self.tree_hand.get_balancing_time(tree)
+                    t = self.tree_hand.get_balancing_rmr_time(tree)
                     print("Balanced the BST in {} seconds.".format(t))
 
     def user_loop(self):
@@ -172,7 +171,7 @@ class UserPrompt:
                 print(
                     "Now wait for the data collection to complete. After that, the program will automatically shut "
                     "down.")
-                # tree_test.testing_suit()
+                tests.testing_suit()
                 return
 
             else:
