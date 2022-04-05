@@ -6,6 +6,7 @@ from old_utilities import merge_sort  # this one sorts normally (1,2...)
 class Node:
     def __init__(self, key: int):
         self.key = key
+        self.bf = 0
         self.left = None
         self.right = None
 
@@ -116,69 +117,86 @@ class AvlTree:
 
         for nd in self.nodes:
             nd_balance = self.calc_balance(nd)
+            nd.bf = nd_balance
             if nd_balance > 1:
                 return False
 
         return True
 
-    def rotate_right(self, nd: Node):
-        # if node has left child then make left child its parent
-        # else if has parent then make the node its parents right
+    def find_unb(self, nd: Node):
+        visited = []
+        to_visit = []
 
-        if nd:
-            left_node = self.get_node(nd.left)
+        visited.append(nd.key)
+        if nd.bf > 1:
+            return nd
 
-            if not left_node:
-                if nd.left:
-                    n_left = copy.deepcopy(nd.left)
-                    n_key = copy.deepcopy(nd.key)
-                    nd.left = None
-                    al_nd = self.find_node(n_left)
-                    if al_nd:
-                        if al_nd.right:
-                            nd.key = al_nd.right
-                    else:
-                        nd.key = n_left
+        left_node = self.get_node(nd.left)
+        right_node = self.get_node(nd.right)
 
-                    if nd.right:
-                        nn = Node(n_key)
-                        nn.right = nd.right
-                        nd.right = n_key
-                        self.nodes.append(nn)
-                    else:
-                        nd.right = n_key
+        if left_node:
+            to_visit.append(left_node)
+        if nd.left:
+            visited.append(nd.left)
+
+        if right_node:
+            to_visit.append(right_node)
+        if nd.right:
+            visited.append(nd.right)
+
+        for n in to_visit:
+            if n.bf > 1:
+                return n
+
+            l_node = self.get_node(n.left)
+            r_node = self.get_node(n.right)
+
+            if l_node:
+                to_visit.append(l_node)
+            if n.left:
+                visited.append(n.left)
+
+            if r_node:
+                to_visit.append(r_node)
+            if n.right:
+                visited.append(n.right)
+
+        return None
+
+    def append_node(self, nd: Node, val: int):
+        if val < nd.key:
+            if not nd.left:
+                nd.left = val
             else:
-                self.rotate_right(left_node)
-
-            right_node = self.get_node(nd.right)
-
-            if not right_node:
-                if nd.left:
-                    n_left = copy.deepcopy(nd.left)
-                    n_key = copy.deepcopy(nd.key)
-                    nd.left = None
-                    al_nd = self.find_node(n_left)
-                    if al_nd:
-                        if al_nd.right:
-                            nd.key = al_nd.right
-                    else:
-                        nd.key = n_left
-
-                    if nd.right:
-                        nn = Node(n_key)
-                        nn.right = nd.right
-                        nd.right = n_key
-                        self.nodes.append(nn)
-                    else:
-                        nd.right = n_key
+                left_node = self.get_node(nd.left)
+                if left_node:
+                    self.append_node(left_node, val)
+                else:
+                    nn = Node(nd.left)
+                    self.nodes.append(nn)
+                    self.append_node(nn, val)
+        elif val > nd.key:
+            if not nd.right:
+                nd.right = val
             else:
-                self.rotate_right(right_node)
+                right_node = self.get_node(nd.right)
+                if right_node:
+                    self.append_node(right_node, val)
+                else:
+                    nn = Node(nd.right)
+                    self.nodes.append(nn)
+                    self.append_node(nn, val)
 
-    def balance_dsw(self):
-        # rotate all nodes right (in-order)
-        # rotate left until tree balanced
+    def balance_rm_root(self):
+        # find the first node with bf > 1 (BFS)
+        # remove the node and insert back into tree in the right place
 
-        self.rotate_right(self.get_root())
+        while not self.is_balanced():
+            nd = self.find_unb(self.get_root())
+            if nd:
+                tmp_nd = copy.deepcopy(nd)
+                self.remove_leaf_or_ochn(nd.key)
+                self.append_node(self.get_root(), tmp_nd.key)
 
     def balance(self):
         # sort the nodes in in-order order
@@ -341,16 +359,18 @@ class AvlTree:
     def remove_leaf_or_ochn(self, val: int):
         # locate the value
         f_node = self.get_node(val)
+
         if not f_node:
             f_node = self.find_node(val)
             if not f_node:
                 return
 
-        # if value is leaf, just remove
-        if val == f_node.left:
-            f_node.left = None
-        if val == f_node.right:
-            f_node.right = None
+        # if has subtree or two children then remove as root
+        left_node = self.get_node(f_node.left)
+        right_node = self.get_node(f_node.right)
+        if left_node or right_node:
+            if val == f_node.key:
+                self.remove_root(f_node)
 
         # elif value has one child, remove value, make child root
         # and update tree
@@ -391,9 +411,11 @@ class AvlTree:
                     if p_node.right == n_key:
                         p_node.right = None
 
-        # elif value has two children, remove value, make neighbour (in value) a root
-        if val == f_node.key:
-            self.remove_root(f_node)
+        # if value is leaf, just remove
+        if val == f_node.left:
+            f_node.left = None
+        if val == f_node.right:
+            f_node.right = None
 
     def remove_root(self, nd: Node):
         # sort nodes in-order
@@ -410,8 +432,19 @@ class AvlTree:
                 else:
                     neigh = srt_nd[i - 1]
 
-        self.remove_leaf_or_ochn(neigh)
-        nd.key = neigh
+        if neigh:
+            self.remove_leaf_or_ochn(neigh)
+
+            n_cp = copy.deepcopy(nd)
+            nd.key = None
+            p_node = self.find_node(n_cp.key)
+            if p_node:
+                if p_node.left == n_cp.key:
+                    p_node.left = neigh
+                if p_node.right == n_cp.key:
+                    p_node.right = neigh
+
+            nd.key = neigh
 
     def print_tree(self):
         if len(self.nodes) == 0:
@@ -520,6 +553,14 @@ class TreeHandler:
 
         return stop_time - start_time
 
+    def get_balancing_rmr_time(self, tree):
+
+        start_time = time.perf_counter()
+        tree.balance_rm_root()
+        stop_time = time.perf_counter()
+
+        return stop_time - start_time
+
 
 if __name__ == '__main__':
     tree_hand = TreeHandler()
@@ -533,9 +574,13 @@ if __name__ == '__main__':
     print("----- bst tree, time: ", bst_t)
     bst_g.print_tree()
 
-    print("----- rotate right")
-    avl_g.balance_dsw()
-    avl_g.print_tree()
+    print("----- bal rm root")
+    bst_g.balance_rm_root()
+    bst_g.print_tree()
+
+    print("----- removing whole tree post-order")
+    bst_g.remove_whole_post_order(bst_g.get_root())
+    bst_g.print_tree()
 
     # print("----- removing whole tree post-order")
     # avl_g.remove_whole_post_order(avl_g.get_root())
