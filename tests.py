@@ -11,7 +11,7 @@ from old_utilities import decreasing_generator as gen
 
 
 def test_wrapper(is_avl: bool, n: int, i):
-    print("{} test\n".format(i))
+    print("\n{} test".format(i))
     tree_hand = trees.TreeHandler()
     tree, gen_time = tree_hand.generate_tree(is_avl, gen(n, 10*n))
     search_time = tree_hand.get_min_time(tree)
@@ -25,8 +25,8 @@ def test_wrapper(is_avl: bool, n: int, i):
 
 
 def testing_handler(is_avl: bool, array: list, sample: int):
-    with open('data_is_avl_{}.csv'.format(is_avl), 'a+', newline='') as csvf:
-        csvwriter = csv.writer(csvf, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    with open('data_is_avl_{}.csv'.format(is_avl), 'w+', newline='') as csvf:
+        csvwriter = csv.writer(csvf, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
         for n in array:
             #csvf.write("{} generate search traverse balance\n".format(n))
             for i in range(sample):
