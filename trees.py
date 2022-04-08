@@ -1,5 +1,6 @@
 import copy
 import time
+import random
 from old_utilities import merge_sort  # this one sorts normally (1,2...)
 
 
@@ -371,6 +372,9 @@ class AvlTree:
         if left_node or right_node:
             if val == f_node.key:
                 self.remove_root(f_node)
+        elif f_node.left and f_node.right:
+            if val == f_node.key:
+                self.remove_root(f_node)
 
         # elif value has one child, remove value, make child root
         # and update tree
@@ -425,12 +429,31 @@ class AvlTree:
         srt_nd = traversal_wrapper(self.traverse_in_order)(nd)
         neigh = None
 
+        l_h = 0
+        r_h = 0
+        left_node = self.get_node(nd.left)
+        right_node = self.get_node(nd.right)
+
+        if not left_node:
+            if nd.left:
+                l_h += 1
+        else:
+            l_h += calc_hei_wrapper(self.calc_height)(left_node)
+
+        if not right_node:
+            if nd.right:
+                r_h += 1
+        else:
+            r_h += calc_hei_wrapper(self.calc_height)(right_node)
+
         for i in range(len(srt_nd)):
             if srt_nd[i] == nd.key:
-                if i + 1 < len(srt_nd):
-                    neigh = srt_nd[i + 1]
+                if l_h >= r_h:
+                    if i - 1 >= 0:
+                        neigh = srt_nd[i - 1]
                 else:
-                    neigh = srt_nd[i - 1]
+                    if i + 1 < len(srt_nd):
+                        neigh = srt_nd[i + 1]
 
         if neigh:
             self.remove_leaf_or_ochn(neigh)
@@ -566,7 +589,7 @@ if __name__ == '__main__':
     tree_hand = TreeHandler()
 
     avl_g, avl_t = tree_hand.generate_tree(True, [1, 3, 2, 8, 4, 7, 5, 13])
-    bst_g, bst_t = tree_hand.generate_tree(False, [1, 3, 2, 8, 4, 7, 5, 13])
+    bst_g, bst_t = tree_hand.generate_tree(False, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10][::-1])
 
     print("----- avl tree, time: ", avl_t)
     avl_g.print_tree()
@@ -578,9 +601,9 @@ if __name__ == '__main__':
     bst_g.balance_rm_root()
     bst_g.print_tree()
 
-    print("----- removing whole tree post-order")
-    bst_g.remove_whole_post_order(bst_g.get_root())
-    bst_g.print_tree()
+    # print("----- removing whole tree post-order")
+    # bst_g.remove_whole_post_order(bst_g.get_root())
+    # bst_g.print_tree()
 
     # print("----- removing whole tree post-order")
     # avl_g.remove_whole_post_order(avl_g.get_root())
