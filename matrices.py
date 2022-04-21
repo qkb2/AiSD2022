@@ -64,41 +64,48 @@ class AdjMatrix():
             n -= 1
             if n == 0:
                 return sorted_v
-            
+
+    def small_dfs(self, u: Vertex, stack: list, flag: bool):
+        if flag:
+            helper_list = self.matrix[u.name]
+            u.visit_color = 1
+            for i in range(self.V):
+                if helper_list[i] == 1 and self.vertices[i].visit_color == 1:
+                    flag = False
+                    break
+                if helper_list[i] == 1 and self.vertices[i].visit_color == 0:
+                    flag = self.small_dfs(self.vertices[i], stack, flag)
+            u.visit_color = 2
+            stack.insert(0, u.name)
+            return flag
+
     def dfs_top_sort(self):
         stack = []
         
         u = None
-        for v in self.vertices[1:]:
+        for v in self.vertices:
             if v.in_deg == 0:
                 u = v
                 break
         if u is None:
             return []
-        stack.append(u)
+        
+        u.visit_color = 1
         while True:
-            print(u.name)
-            a_v = True
+            check = self.small_dfs(u, stack, True)
+            if not check:
+                return []
+            flag = True
+            for v in self.vertices:
+                if v.visit_color != 2:
+                    flag = False
+                    break
+            if flag:
+                return stack
+            
             for v in self.vertices:
                 if v.visit_color == 0:
-                    a_v = False
-            if a_v:
-                return stack
-            h_n = False
-            for i in range(len(self.matrix[u.name])):
-                if self.matrix[u.name][i] > 0:
-                    h_n = True
-                    u = self.vertices[i]
-                    stack.append(u)
-                    u.visit_color = 1
-            if not h_n:
-                if len(stack) > 0:
-                    u = stack.pop(-1)
-                else:
-                    # for v in self.vertices[1:]:
-                        # if v.visit_color == 0:
-                            # u = v
-                    pass
+                    u = v
 
 
 class AdjList:
@@ -180,7 +187,7 @@ class TheSaintMatrix(AdjMatrix):
 if __name__ == "__main__":
 
     adj_mat = AdjMatrix()
-    adj_mat.create_from_edge_list([[1, 2], [1, 3], [3, 4], [3, 5]], [i for i in range(6)])
+    adj_mat.create_from_edge_list([[1, 2], [1, 3], [3, 4], [3, 5], [0, 1]], [i for i in range(6)])
     print(adj_mat.V)
     print(adj_mat.E)
     print(adj_mat.matrix)
@@ -189,4 +196,4 @@ if __name__ == "__main__":
         # print(v.name, v.in_deg, v.visit_color)
 
     print(adj_mat.kahn_top_sort())
-    # print(adj_mat.dfs_top_sort())
+    print(adj_mat.dfs_top_sort())
