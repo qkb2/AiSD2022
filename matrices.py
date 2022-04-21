@@ -47,7 +47,7 @@ class AdjMatrix():
             if u is None:
                 return []
             sorted_v.append(u)
-            for i in range(self.matrix[u.name]):
+            for i in range(len(self.matrix[u.name])):
                 if self.matrix[u.name][i] == 1:
                     self.vertices[i].in_deg -= 1
             self.vertices.remove(u)
@@ -56,9 +56,38 @@ class AdjMatrix():
                 return sorted_v
             
     def dfs_top_sort(self):
-        sorted_v = []
-        heap = []
-
+        stack = []
+        
+        u = None
+        for v in self.vertices[1:]:
+            if v.in_deg == 0:
+                u = v
+                break
+        if u is None:
+            return []
+        stack.append(u)
+        while True:
+            print(u.name)
+            a_v = True
+            for v in self.vertices:
+                if v.visit_color == 0:
+                    a_v = False
+            if a_v:
+                return stack
+            h_n = False
+            for i in range(len(self.matrix[u.name])):
+                if self.matrix[u.name][i] > 0:
+                    h_n = True
+                    u = self.vertices[i]
+                    stack.append(u)
+                    u.visit_color = 1
+            if not h_n:
+                if len(stack) > 0:
+                    u = stack.pop(-1)
+                else:
+                    # for v in self.vertices[1:]:
+                        # if v.visit_color == 0:
+                            # u = v
 
 
 class AdjList:
@@ -137,3 +166,16 @@ class TheSaintMatrix(AdjMatrix):
                     self.st_matrix[u][i] = -last_non
 
             
+if __name__ == "__main__":
+
+    adj_mat = AdjMatrix()
+    adj_mat.create_from_edge_list([[1, 2], [1, 3], [3, 4], [3, 5]], [i for i in range(6)])
+    # print(adj_mat.V)
+    # print(adj_mat.E)
+    # print(adj_mat.matrix)
+    adj_mat.update_all_in_degs()
+    # for v in adj_mat.vertices:
+        # print(v.name, v.in_deg, v.visit_color)
+
+    # print(adj_mat.kahn_top_sort())
+    print(adj_mat.dfs_top_sort())
