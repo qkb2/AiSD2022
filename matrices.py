@@ -32,27 +32,37 @@ class AdjMatrix():
 
     def update_all_in_degs(self) -> None:
         for v in self.vertices:
+            v.in_deg = 0
             for i in range(self.V):
-                if self.matrix[i][v.name] == 1:
+                if self.matrix[v.name][i] == -1:
                     v.in_deg += 1
 
     def kahn_top_sort(self):
+        self.update_all_in_degs()
+        for i in self.vertices:
+            print(i.in_deg)
         sorted_v = []
+        helper_vertices = self.vertices.copy()
+        # print("The array")
+        n = self.V
         while True:
+            # print("in loop")
             u = None
-            for v in self.vertices:
+            for v in helper_vertices:
                 if v.in_deg == 0:
                     u = v
+                    # print("vertex chosen {}".format(u.name))
                     break
             if u is None:
                 return []
-            sorted_v.append(u)
-            for i in range(len(self.matrix[u.name])):
+            sorted_v.append(u.name)
+            for i in range(self.V):
                 if self.matrix[u.name][i] == 1:
                     self.vertices[i].in_deg -= 1
-            self.vertices.remove(u)
-            self.V -= 1
-            if self.V == 0:
+                    # print("vertex indeg -1: {}".format(i))
+            helper_vertices.remove(u)
+            n -= 1
+            if n == 0:
                 return sorted_v
             
     def dfs_top_sort(self):
@@ -88,6 +98,7 @@ class AdjMatrix():
                     # for v in self.vertices[1:]:
                         # if v.visit_color == 0:
                             # u = v
+                    pass
 
 
 class AdjList:
@@ -170,12 +181,12 @@ if __name__ == "__main__":
 
     adj_mat = AdjMatrix()
     adj_mat.create_from_edge_list([[1, 2], [1, 3], [3, 4], [3, 5]], [i for i in range(6)])
-    # print(adj_mat.V)
-    # print(adj_mat.E)
-    # print(adj_mat.matrix)
+    print(adj_mat.V)
+    print(adj_mat.E)
+    print(adj_mat.matrix)
     adj_mat.update_all_in_degs()
     # for v in adj_mat.vertices:
         # print(v.name, v.in_deg, v.visit_color)
 
-    # print(adj_mat.kahn_top_sort())
-    print(adj_mat.dfs_top_sort())
+    print(adj_mat.kahn_top_sort())
+    # print(adj_mat.dfs_top_sort())
