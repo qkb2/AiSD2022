@@ -1,3 +1,19 @@
+import random
+
+
+def edge_list_to_vertex_list(edge_list: list):
+    max_key = 0
+    for el in edge_list:
+        if el[0] > max_key:
+            max_key = el[0]
+        if el[1] > max_key:
+            max_key = el[1]
+    return [i for i in range(max_key+1)]
+    # assuming that since it's impossible to create "solitary" nodes via edge list
+    # it's better to just create all the possible nodes that could exist
+
+
+
 class Vertex:
     def __init__(self, name: int) -> None:
         self.name = name
@@ -11,7 +27,15 @@ class AdjMatrix():
         self.V = 0
         self.E = 0
         self.matrix = []
-        self.vertices = []
+        self.vertices = [] # vertices start at 0
+
+    def __repr__(self) -> str:
+        repr = ''
+        for i in range(self.V):
+            for j in range(self.V):
+                repr += str(self.matrix[i][j])+'\t'
+            repr += '\n'
+        return repr
     
     def create_from_edge_list(self, edge_list: list, vertex_list: list) -> None:
         self.V = len(vertex_list)
@@ -107,6 +131,18 @@ class AdjMatrix():
                 if v.visit_color == 0:
                     u = v
 
+    def create_max_dag(self, n: int):
+        self.V = n
+        self.vertices = [Vertex(v) for v in range(n)]
+        for i in range(n):
+            helper_list1 = [1 for _ in range(i)]
+            helper_list1.append(0)
+            helper_list1.extend([-1 for _ in range(n-i-1)])
+            self.matrix.append(helper_list1)
+        
+    # def rand_max_dag(self):
+
+        
 
 class AdjList:
     def __init__(self) -> None:
@@ -183,17 +219,22 @@ class TheSaintMatrix(AdjMatrix):
                 else:
                     self.st_matrix[u][i] = -last_non
 
-            
+
+
 if __name__ == "__main__":
 
     adj_mat = AdjMatrix()
     adj_mat.create_from_edge_list([[1, 2], [1, 3], [3, 4], [3, 5], [0, 1]], [i for i in range(6)])
     print(adj_mat.V)
     print(adj_mat.E)
-    print(adj_mat.matrix)
+    print(adj_mat)
     adj_mat.update_all_in_degs()
     # for v in adj_mat.vertices:
         # print(v.name, v.in_deg, v.visit_color)
 
     print(adj_mat.kahn_top_sort())
     print(adj_mat.dfs_top_sort())
+
+    rand_mat = AdjMatrix()
+    rand_mat.create_max_dag(10)
+    print(rand_mat)
