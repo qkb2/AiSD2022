@@ -1,3 +1,5 @@
+#this version uses 0..n-1 matrices, which seem to be problematic for ST matrix.
+
 import random
 
 

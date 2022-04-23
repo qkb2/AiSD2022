@@ -27,7 +27,7 @@ class AdjMatrix():
         self.V = 0
         self.E = 0
         self.matrix = []
-        self.vertices = [] # vertices start at 0
+        self.vertices = [] # vertices start at 1
 
     def __repr__(self) -> str:
         repr = ''
