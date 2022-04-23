@@ -1,7 +1,7 @@
 import copy
 import time
 import random
-from old_utilities import merge_sort  # this one sorts normally (1,2...)
+from old_project_trees.old_utilities import merge_sort  # this one sorts normally (1,2...)
 
 
 class Node:

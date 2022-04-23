@@ -1,5 +1,5 @@
 from tests import test_wrapper
-from old_utilities import decreasing_generator as gen
+from old_project_trees.old_utilities import decreasing_generator as gen
 import trees
 tree_hand = trees.TreeHandler()
 l = gen(100, 1000)

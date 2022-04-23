@@ -7,7 +7,7 @@
 import csv
 
 import trees
-from old_utilities import decreasing_generator as gen
+from old_project_trees.old_utilities import decreasing_generator as gen
 
 
 def test_wrapper(is_avl: bool, n: int, i):
