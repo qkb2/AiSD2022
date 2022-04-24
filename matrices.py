@@ -48,6 +48,10 @@ class AdjMatrix():
 
         self.vertices = [Vertex(v) for v in vertex_list] # zero not inluded
 
+    def create_matrix_wrapper(self, edge_list: list):
+        vertex_list = edge_list_to_vertex_list(edge_list)
+        self.create_from_edge_list(edge_list, vertex_list)
+
     def get_fl_io(self, u: int, fl: int, io: int) -> int:
         helper_list = self.matrix[u]
         if fl == 1:
@@ -170,7 +174,7 @@ class AdjMatrix():
 class TheSaintMatrix(AdjMatrix):
     st_mat = []
 
-    def build_the_saint_matrix(self):
+    def build_the_saint_matrix(self): # use only when the normal AdjMat has been set
         self.st_matrix = [[0 for _ in range(self.V+4)] for _ in range(self.V+1)]
         #do not use zero as a node name in this matrix
         for u in range(1, self.V+1):
