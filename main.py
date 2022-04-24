@@ -1,5 +1,5 @@
 import matrices
-#import tests
+import tests
 from os.path import isfile
 
 class UserPrompt:
@@ -138,7 +138,7 @@ class UserPrompt:
                 print(
                     "Now wait for the data collection to complete. After that, the program will automatically shut "
                     "down.")
-                # tests.testing_suit()
+                tests.testing_suit()
                 return
 
             else:
