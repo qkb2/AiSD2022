@@ -104,6 +104,8 @@ class UserPrompt:
             while not options_looper:
                 options_looper = self.edge_list_input()           
 
+
+    def display_results(self):
         mat = matrices.TheSaintMatrix()
         mat.create_matrix_wrapper(self.edge_list)
         mat.build_the_saint_matrix()
@@ -126,6 +128,7 @@ class UserPrompt:
                 "Choose one of the following options: [testing, user input, file input]. ").lower()
             if s == "user input":
                 self.user_loop(s)
+                self.display_results()
                 s = input(
                     "If you want to exit the program, enter [exit]. Otherwise press Enter to try again. ")
                 if s == "exit":
@@ -140,6 +143,14 @@ class UserPrompt:
                     "down.")
                 tests.testing_suit()
                 return
+            
+            elif s == "file input":
+                self.edge_list_from_file()
+                self.display_results()
+                s = input(
+                    "If you want to exit the program, enter [exit]. Otherwise press Enter to try again. ")
+                if s == "exit":
+                    return
 
             else:
                 print("Please enter the correct option.")
