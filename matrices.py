@@ -146,6 +146,7 @@ class AdjMatrix():
         self.V = n
         self.E = n*(n-1)//2
         self.vertices = [Vertex(v) for v in range(1, n+1)]
+        self.matrix = []
         self.matrix.append([0 for _ in range(self.V+1)])
         for i in range(n):
             helper_list1 = [0]
@@ -156,8 +157,10 @@ class AdjMatrix():
         
     def randomize_max_dag(self) -> None:
         c = 0
+        c_panic = 0
         random.seed()
-        while c < self.E//2:
+        while c < self.E//2 and c_panic < self.E:
+            c_panic += 1
             x = random.randint(1, self.V)
             y = random.randint(1, self.V)
             if self.matrix[x][y] != 0:
@@ -172,8 +175,6 @@ class AdjMatrix():
 
 
 class TheSaintMatrix(AdjMatrix):
-    st_mat = []
-
     def build_the_saint_matrix(self): # use only when the normal AdjMat has been set
         self.st_matrix = [[0 for _ in range(self.V+4)] for _ in range(self.V+1)]
         #do not use zero as a node name in this matrix
