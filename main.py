@@ -10,6 +10,7 @@ class UserPrompt:
 
 
     def edge_list_input(self):
+        self.edge_list = []
         # must be changed to accept different type of input (lines of pairs of ints)
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
@@ -20,7 +21,7 @@ class UserPrompt:
         while True:
             x = input(
                 "Please enter your numbers as pairs, entering one pair at the time, one whitespace between each number: "
-                "and one new line between each pair")
+                "and one new line between each pair\n")
             if x == '':
                 if len(self.edge_list) != 0:
                     return True
@@ -43,6 +44,7 @@ class UserPrompt:
                 print("Too many numbers in a row.")
 
     def edge_list_from_file(self):
+        self.edge_list = []
         # must be changed to accept different type of input (lines of pairs of ints)
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
