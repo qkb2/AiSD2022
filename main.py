@@ -48,10 +48,10 @@ class UserPrompt:
         # must be changed to accept different type of input (lines of pairs of ints)
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
-            "If the file contains any discrepencies, zeroes etc. there will be an error.")
+            "values. If the file contains any discrepencies, zeroes etc. there will be an error raised.")
         faddr = ''
         while True:
-            faddr = input("Please enter a correct path to a file.")
+            faddr = input("Please enter a correct path to a file: ")
             if isfile(faddr) and faddr.endswith(".txt"):
                 break
             else:
@@ -76,7 +76,8 @@ class UserPrompt:
             self.E = array[1]
             c = 0
          
-            while c < array[1]:
+            while c < self.E:
+                # print(c)
                 c += 1
                 x = fread.readline()
                 if x == '':
@@ -118,16 +119,22 @@ class UserPrompt:
         print("Sorting the graph with both algorithms.")
         arr1 = mat.kahn_top_sort()
         arr2 = mat.dfs_top_sort()
+        arr3 = mat.tsm_kahn_top_sort()
+        arr4 = mat.tsm_dfs_top_sort()
         if len(arr1) != len(arr2):
             print("An error occured. Exiting...")
             return
+        if len(arr1) == 0:
+            print("Graph cannot be sorted.")
+            return
         print("Topologically sorted arrays gotten by:\nKahn's sort: {}\nDFS-based sort: {}".format(arr1, arr2))
+        print("Topologically sorted arrays gotten with TSM by:\nKahn's sort: {}\nDFS-based sort: {}".format(arr3, arr4))
 
 
     def main_loop(self) -> None:
         while True:
             s = input(
-                "Choose one of the following options: [testing, user input, file input]. ").lower()
+                "Choose one of the following options: [testing, user input, file input, exit]. ").lower()
             if s == "user input":
                 self.user_loop(s)
                 self.display_results()
@@ -153,6 +160,9 @@ class UserPrompt:
                     "If you want to exit the program, enter [exit]. Otherwise press Enter to try again. ")
                 if s == "exit":
                     return
+
+            elif s == "exit":
+                return
 
             else:
                 print("Please enter the correct option.")
