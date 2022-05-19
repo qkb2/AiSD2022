@@ -1,3 +1,4 @@
+from copy import deepcopy
 import random
 
 
@@ -88,6 +89,23 @@ class UndirAdjMatrix():
         is_ham = self.__hamiltonian(self.start)
         return is_ham
 
+    def __dfs_euler(self, v: int):
+        for u in range(self.V):
+            if self.matrix_copy[v][u] == 1:
+                self.matrix_copy[v][u] = 0
+                self.matrix_copy[u][v] = 0
+                self.__dfs_euler(u)
+        self.epath.append(v)
+
+    def eulerian_cycle(self) -> bool:
+        self.epath = []
+        self.matrix_copy = deepcopy(self.matrix)
+        self.__dfs_euler(0)
+        if len(self.epath) == self.E:
+            return True
+        else:
+            return False
+
 
 class AdjList:
     def __init__(self) -> None:
@@ -170,6 +188,25 @@ class AdjList:
         self.k = 1
         is_ham = self.__hamiltonian(self.start)
         return is_ham
+
+    def __dfs_euler(self, v: int):
+        for u in self.nodes_copy[v]:
+            self.nodes_copy[v].remove(u)
+            self.nodes_copy[u].remove(v)
+            self.__dfs_euler(u)
+        self.epath.append(v)
+
+    def eulerian_cycle(self) -> bool:
+        self.epath = []
+        self.nodes_copy = deepcopy(self.out_nodes)
+        self.__dfs_euler(0)
+        if len(self.epath) == self.E:
+            return True
+        else:
+            return False
+
+
+
 
     
 

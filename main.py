@@ -15,9 +15,9 @@ class UserPrompt:
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
             "value. The array cannot be empty.\nChoose natural key values. If you want to stop adding the edges press "
-            "enter without typing any values. Note: the first key will always be assumed to be 1 and the last will be\n"
+            "enter without typing any values. Note: the first key will always be assumed to be 0 and the last will be\n"
             "assumed to be the greatest number typed. Keys not used will still have their nodes created if they fall\n"
-            "in range of 1 and max key, but they will not affect the usability of an algorithm.")
+            "in range of 0 and max key, so be wary of the fact that it may result in problems regarding Ham. cycles.")
         while True:
             x = input(
                 "Please enter your numbers as pairs, entering one pair at the time, one whitespace between each number: "
@@ -32,10 +32,6 @@ class UserPrompt:
                 array = list(map(int, array))
             except ValueError:
                 print("The input seems to include non-numbers")
-                continue
-            
-            if array[0] == 0 or array[1] == 0:
-                print("The key cannot be 0")
                 continue
 
             if len(array) == 2:
@@ -89,9 +85,6 @@ class UserPrompt:
                 try:
                     array = list(map(int, array))
                 except ValueError:
-                    continue
-                
-                if array[0] == 0 or array[1] == 0:
                     continue
 
                 if len(array) == 2:
