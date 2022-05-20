@@ -64,12 +64,12 @@ class UndirAdjMatrix():
 
     def __hamiltonian(self, v: int) -> bool:
         self.is_visited[v] = True
-        self.visited = 1
+        self.visited += 1
         helper_list = self.matrix[v]
         for i in range(self.V):
             if  helper_list[i] == 1 and i == self.start and self.visited == self.V:
                 return True
-            if not self.is_visited[i]:
+            if helper_list[i] == 1 and not self.is_visited[i]:
                 db = self.__hamiltonian(i)
                 if db:
                     self.hpath[self.k] = v
@@ -97,14 +97,35 @@ class UndirAdjMatrix():
                 self.__dfs_euler(u)
         self.epath.append(v)
 
+    def euler_helper(self) -> int:
+        v = 0
+        while True:
+            for i in self.matrix[v]:
+                if i == 1:
+                    return v
+            v += 1
+            if v == self.V:
+                return -1
+
     def eulerian_cycle(self) -> bool:
         self.epath = []
         self.matrix_copy = deepcopy(self.matrix)
-        self.__dfs_euler(0)
-        if len(self.epath) == self.E:
+        v = self.euler_helper()
+        self.__dfs_euler(v)
+        if len(self.epath) == self.E+1 and self.epath[0] == self.epath[-1]:
             return True
         else:
             return False
+
+    def euler_decision(self) -> bool:
+        for i in range(self.V):
+            c = 0
+            for j in self.matrix[i]:
+                if j == 1:
+                    c += 1
+            if c%2 != 0:
+                return False
+        return True
 
 
 class AdjList:
@@ -165,7 +186,7 @@ class AdjList:
 
     def __hamiltonian(self, v: int) -> bool:
         self.is_visited[v] = True
-        self.visited = 1
+        self.visited += 1
         for i in self.out_nodes[v]:
             if i == self.start and self.visited == self.V:
                 return True
@@ -192,37 +213,51 @@ class AdjList:
     def __dfs_euler(self, v: int):
         for u in self.nodes_copy[v]:
             self.nodes_copy[v].remove(u)
-            self.nodes_copy[u].remove(v)
+            if v in self.nodes_copy[u]:
+                self.nodes_copy[u].remove(v)
             self.__dfs_euler(u)
         self.epath.append(v)
 
     def eulerian_cycle(self) -> bool:
         self.epath = []
         self.nodes_copy = deepcopy(self.out_nodes)
-        self.__dfs_euler(0)
-        if len(self.epath) == self.E:
+        v = 0
+        while len(self.out_nodes[v]) == 0:
+            v += 1
+        self.__dfs_euler(v)
+        if len(self.epath) == self.E+1 and self.epath[0] == self.epath[-1]:
             return True
         else:
             return False
 
+    def euler_decision(self) -> bool:
+        self.out_degs = [len(i) for i in self.out_nodes]
 
 
-
-    
+def easy_test(test_list: list):
+    adj_mat = UndirAdjMatrix()
+    adj_list = AdjList()
+    adj_mat.create_matrix_wrapper(test_list)
+    adj_list.create_list_wrapper(test_list)
+    print(adj_mat)
+    print(adj_list)
+    print(adj_mat.hamiltonian_cycle())
+    print(adj_mat.eulerian_cycle())
+    print(adj_list.hamiltonian_cycle())
+    print(adj_list.eulerian_cycle())    
 
 
 if __name__ == "__main__":
 
-    test_list = [[1, 2], [1, 3], [3, 4], [3, 5], [4, 1]]
-    adj_mat = UndirAdjMatrix()
-    adj_mat.create_matrix_wrapper(test_list)
-    print(adj_mat)
-    adj_list = AdjList()
-    adj_list.create_list_wrapper(test_list)
-    print(adj_list)
+    test_list = [[0, 1], [1, 2], [2, 3], [3, 0]]
+    test_list_nothing = [[0, 1], [1, 2], [2, 3]]
+    test_list_there_should_be_eulers = [[4, 1], [1, 2], [2, 3], [3, 4]]
     rand_mat = UndirAdjMatrix()
     rand_mat.create_random_undir_graph(10, 0.5)
     print(rand_mat)
     rand_list = AdjList()
     rand_list.create_random_dir_graph(10, 0.5)
     print(rand_list)
+    easy_test(test_list)
+    easy_test(test_list_nothing)
+    easy_test(test_list_there_should_be_eulers)
