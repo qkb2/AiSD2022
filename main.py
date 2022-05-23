@@ -1,45 +1,48 @@
 
 from os.path import isfile
 
+
 class UserPrompt:
     def __init__(self) -> None:
-        self.edge_list = []
-        self.V = 0
-        self.E = 0
+        self.array = []
+        self.b = 0
+        self.n = 0
 
-
-    def edge_list_input(self):
-        self.edge_list = []
+    # TODO: add the ability for user to add the b and n
+    def list_input(self):
+        self.array = []
         # must be changed to accept different type of input (lines of pairs of ints)
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
-            "value. The array cannot be empty.\nChoose natural key values. If you want to stop adding the edges press "
-            "enter without typing any values. Note: the first key will always be assumed to be 0 and the last will be\n"
-            "assumed to be the greatest number typed. Keys not used will still have their nodes created if they fall\n"
-            "in range of 0 and max key, so be wary of the fact that it may result in problems regarding Ham. cycles.")
+            "value. The array cannot be empty.\nChoose natural values. If you want to stop adding the elements press "
+            "enter without typing any values. Note: the indexes will be assumed to be from 0 to n-1, each element having\n"
+            "its own index determined by order it was enter in. First pair entered should be the number of elements\n"
+            "and the knapsack capacity b. If more than n elements are typed in, the program will automatically change the\n"
+            "value of n to reflect that.")
         while True:
             x = input(
                 "Please enter your numbers as pairs, entering one pair at the time, one whitespace between each number: "
                 "and one new line between each pair\n")
             if x == '':
-                if len(self.edge_list) != 0:
+                if len(self.array) != 0:
+                    self.n = len(self.array)
                     return True
                 return False
 
-            array = x.split()
+            harr = x.split()
             try:
-                array = list(map(int, array))
+                harr = list(map(int, harr))
             except ValueError:
                 print("The input seems to include non-numbers")
                 continue
 
-            if len(array) == 2:
-                self.edge_list.append(array)
+            if len(harr) == 2:
+                self.array.append(harr)
             else:
                 print("Too many numbers in a row.")
 
-    def edge_list_from_file(self):
-        self.edge_list = []
+    def list_from_file(self):
+        self.array = []
         # must be changed to accept different type of input (lines of pairs of ints)
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
@@ -51,54 +54,54 @@ class UserPrompt:
                 break
             else:
                 print("Path incorrect.")
-            
+
         with open(faddr, "r") as fread:
             x = fread.readline()
             if x == '':
                 return False
-            array = x.split()
+            harr = x.split()
             try:
-                array = list(map(int, array))
+                harr = list(map(int, harr))
             except ValueError:
                 print("Values corrupted. Choose a different file.")
                 return False
-                
-            if array[0] == 0:
-                print("The graph cannot be empty. Choose a different file.")
+
+            if harr[0] == 0:
+                print("The list cannot be empty. Choose a different file.")
                 return False
 
-            self.V = array[0]
-            self.E = array[1]
+            self.n = harr[0]
+            self.b = harr[1]
             c = 0
-         
-            while c < self.E:
+
+            while c < self.n:
                 # print(c)
                 c += 1
                 x = fread.readline()
                 if x == '':
-                    if len(self.edge_list) != 0:
+                    if len(self.array) != 0:
+                        self.n = len(self.array)
                         return True
                     return False
 
-                array = x.split()
+                harr = x.split()
                 try:
-                    array = list(map(int, array))
+                    harr = list(map(int, harr))
                 except ValueError:
                     continue
 
-                if len(array) == 2:
-                    self.edge_list.append(array)
+                if len(harr) == 2:
+                    self.array.append(harr)
 
     def user_loop(self, s: str):
         if s == 'file loop':
-            options_looper = self.edge_list_from_file()
+            options_looper = self.list_from_file()
             while not options_looper:
-                options_looper = self.edge_list_from_file()
+                options_looper = self.list_from_file()
         else:
-            options_looper = self.edge_list_input()
+            options_looper = self.list_input()
             while not options_looper:
-                options_looper = self.edge_list_input()           
-
+                options_looper = self.list_input()
 
     def display_results(self):
         adj_mat = graphs.UndirAdjMatrix()
@@ -143,7 +146,6 @@ class UserPrompt:
         else:
             print("An error ocurred (Euler - directed).")
 
-
     def main_loop(self) -> None:
         while True:
             s = input(
@@ -165,9 +167,9 @@ class UserPrompt:
                     "down.")
                 # tests.testing_suit()
                 return
-            
+
             elif s == "file input":
-                self.edge_list_from_file()
+                self.list_from_file()
                 self.display_results()
                 s = input(
                     "If you want to exit the program, enter [exit]. Otherwise press Enter to try again. ")

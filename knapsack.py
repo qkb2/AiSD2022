@@ -10,6 +10,8 @@ class Knapsack:
         self.elements = []
         self.n = 0
         self.b = 0
+        self.m = []
+        self.sol_array = []
 
     def create_from_list(self, b: int, arr: list) -> None:
         self.b = b
@@ -55,8 +57,40 @@ class Knapsack:
 
         while len(solution) != self.n:
             solution += '0'
-        return solution, fmax
+        return solution, fmax # if fmax = 0 then the solution is invalid
+
+    def __dynamic_helper(self, i: int, j: int):
+        if i == 0:
+            return
+        if self.m[i, j] > self.m[i-1, j]:
+            self.__dynamic_helper(i-1, j-self.elements[i].weight)
+            self.sol_array[i] = 1
+            return
+        else:
+            self.__dynamic_helper(i-1, j)
+            return
+
 
     def dynamic(self):
-        self.matrix = [[0 for _ in range(self.b+1)] for _ in range(self.n+1)]
+        self.m = [[0 for _ in range(self.b+1)] for _ in range(self.n+1)]
+        for i in range(1, self.n+1):
+            for j in range(1, self.b+1):
+                if self.elements[i].weight > j:
+                    self.m[i, j] = self.m[i-1, j]
+                else:
+                    self.m[i, j] = max(self.m[i-1, j], self.m[i-1, j-self.elements[i].weight] + self.elements[i].price)
         
+        fmax = self.m[self.n][self.b]
+        solution = ''
+        if fmax == 0:
+            solution = self.n * '0'
+            return solution, fmax # invalid solution return
+        else:
+            self.sol_array = [0 for _ in range(self.n+1)]
+            self.__dynamic_helper(self.n, self.b)
+            for i in self.sol_array[1:]:
+                if i == 1:
+                    solution += '1'
+                else:
+                    solution += '0'
+            return solution, fmax
