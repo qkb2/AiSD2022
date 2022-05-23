@@ -1,5 +1,5 @@
-import graphs
-# import tests
+import matrices
+import tests
 from os.path import isfile
 
 class UserPrompt:
@@ -15,9 +15,9 @@ class UserPrompt:
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
             "value. The array cannot be empty.\nChoose natural key values. If you want to stop adding the edges press "
-            "enter without typing any values. Note: the first key will always be assumed to be 0 and the last will be\n"
+            "enter without typing any values. Note: the first key will always be assumed to be 1 and the last will be\n"
             "assumed to be the greatest number typed. Keys not used will still have their nodes created if they fall\n"
-            "in range of 0 and max key, so be wary of the fact that it may result in problems regarding Ham. cycles.")
+            "in range of 1 and max key, but they will not affect the usability of an algorithm.")
         while True:
             x = input(
                 "Please enter your numbers as pairs, entering one pair at the time, one whitespace between each number: "
@@ -33,6 +33,10 @@ class UserPrompt:
             except ValueError:
                 print("The input seems to include non-numbers")
                 continue
+            
+            if array[0] == 0 or array[1] == 0:
+                print("The key cannot be 0")
+                continue
 
             if len(array) == 2:
                 self.edge_list.append(array)
@@ -44,7 +48,7 @@ class UserPrompt:
         # must be changed to accept different type of input (lines of pairs of ints)
         print(
             "Warning! This program accepts only integer values. Negative integers will be converted to their absolute "
-            "values. If the file contains any discrepencies etc. there will be an error raised.")
+            "values. If the file contains any discrepencies, zeroes etc. there will be an error raised.")
         faddr = ''
         while True:
             faddr = input("Please enter a correct path to a file: ")
@@ -86,6 +90,9 @@ class UserPrompt:
                     array = list(map(int, array))
                 except ValueError:
                     continue
+                
+                if array[0] == 0 or array[1] == 0:
+                    continue
 
                 if len(array) == 2:
                     self.edge_list.append(array)
@@ -102,47 +109,26 @@ class UserPrompt:
 
 
     def display_results(self):
-        adj_mat = graphs.UndirAdjMatrix()
-        adj_list = graphs.DirAdjList()
-        adj_mat.create_matrix_wrapper(self.edge_list)
-        adj_list.create_list_wrapper(self.edge_list)
-        print("Undirected adjacency matrix:")
-        print(adj_mat)
-        print("Directed adjacency list:")
-        print(adj_list)
-        print("Searching for paths...")
-
-        arr_ham_am = adj_mat.hamilton_wrapper()
-        arr_eu_am = adj_mat.euler_wrapper()
-        test_am = adj_mat.euler_decision()
-        arr_ham_al = adj_list.hamilton_wrapper()
-        arr_eu_al = adj_list.euler_wrapper()
-        test_al = adj_list.euler_decision()
-
-        print("Results:")
-        if len(arr_ham_am) == 0:
-            print("No hamiltonian path for undirected graph.")
-        else:
-            print("Hamiltonian path for undirected graph: {}".format(arr_ham_am))
-
-        if len(arr_ham_am) == 0:
-            print("No hamiltonian path for directed graph.")
-        else:
-            print("Hamiltonian path for directed graph: {}".format(arr_ham_al))
-
-        if len(arr_eu_am) == 0 and not test_am:
-            print("No eulerian path for undirected graph.")
-        elif len(arr_eu_am) != 0 and test_am:
-            print("Eulerian path for undirected graph: {}".format(arr_eu_am))
-        else:
-            print("An error ocurred (Euler - undirected).")
-
-        if len(arr_eu_al) == 0 and not test_al:
-            print("No eulerian path for directed graph.")
-        elif len(arr_eu_al) != 0 and test_al:
-            print("Eulerian path for directed graph: {}".format(arr_eu_al))
-        else:
-            print("An error ocurred (Euler - directed).")
+        mat = matrices.TheSaintMatrix()
+        mat.create_matrix_wrapper(self.edge_list)
+        mat.build_the_saint_matrix()
+        print("Adjacency matrix:")
+        print(mat)
+        print("Matrix of a graph following the prof. Szachniuk's convention:")
+        print(mat.get_str())
+        print("Sorting the graph with both algorithms.")
+        arr1 = mat.kahn_top_sort()
+        arr2 = mat.dfs_top_sort()
+        arr3 = mat.tsm_kahn_top_sort()
+        arr4 = mat.tsm_dfs_top_sort()
+        if len(arr1) != len(arr2):
+            print("An error occured. Exiting...")
+            return
+        if len(arr1) == 0:
+            print("Graph cannot be sorted.")
+            return
+        print("Topologically sorted arrays gotten by:\nKahn's sort: {}\nDFS-based sort: {}".format(arr1, arr2))
+        print("Topologically sorted arrays gotten with TSM by:\nKahn's sort: {}\nDFS-based sort: {}".format(arr3, arr4))
 
 
     def main_loop(self) -> None:
@@ -164,7 +150,7 @@ class UserPrompt:
                 print(
                     "Now wait for the data collection to complete. After that, the program will automatically shut "
                     "down.")
-                # tests.testing_suit()
+                tests.testing_suit()
                 return
             
             elif s == "file input":

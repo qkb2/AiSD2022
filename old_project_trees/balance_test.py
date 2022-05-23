@@ -1,7 +1,10 @@
 from tests import test_wrapper
+from old_project_trees.old_utilities import decreasing_generator as gen
 import trees
 tree_hand = trees.TreeHandler()
-tree, t = tree_hand.generate_tree(False, [10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+l = gen(100, 1000)
+print(l)
+tree, t = tree_hand.generate_tree(False, l)
 t = tree_hand.get_balancing_rmr_time(tree)
 print(tree)
 print(t)
