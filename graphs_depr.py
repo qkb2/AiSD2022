@@ -118,8 +118,8 @@ class UndirAdjMatrix():
         v = self.euler_helper()
         if v == -1:
             return True
-        if not self.euler_decision():
-            return False
+        # if not self.euler_decision():
+        #     return False
         self.__dfs_euler(v)
         if len(self.epath) == self.E+1 and self.epath[0] == self.epath[-1]:
             return True
@@ -253,8 +253,8 @@ class DirAdjList:
         v = self.euler_helper()
         if v == -1:
             return True
-        if not self.euler_decision():
-            return False
+        # if not self.euler_decision():
+        #     return False
         self.__dfs_euler(v)
         if len(self.epath) == self.E+1 and self.epath[0] == self.epath[-1]:
             return True

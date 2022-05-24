@@ -114,10 +114,8 @@ class UserPrompt:
 
         arr_ham_am = adj_mat.hamilton_wrapper()
         arr_eu_am = adj_mat.euler_wrapper()
-        test_am = adj_mat.euler_decision()
         arr_ham_al = adj_list.hamilton_wrapper()
         arr_eu_al = adj_list.euler_wrapper()
-        test_al = adj_list.euler_decision()
 
         print("Results:")
         if len(arr_ham_am) == 0:
@@ -130,19 +128,15 @@ class UserPrompt:
         else:
             print("Hamiltonian path for directed graph: {}".format(arr_ham_al))
 
-        if len(arr_eu_am) == 0 and not test_am:
+        if len(arr_eu_am) == 0:
             print("No eulerian path for undirected graph.")
-        elif len(arr_eu_am) != 0 and test_am:
+        else:
             print("Eulerian path for undirected graph: {}".format(arr_eu_am))
-        else:
-            print("An error ocurred (Euler - undirected).")
 
-        if len(arr_eu_al) == 0 and not test_al:
+        if len(arr_eu_al) == 0:
             print("No eulerian path for directed graph.")
-        elif len(arr_eu_al) != 0 and test_al:
-            print("Eulerian path for directed graph: {}".format(arr_eu_al))
         else:
-            print("An error ocurred (Euler - directed).")
+            print("Eulerian path for directed graph: {}".format(arr_eu_al))
 
 
     def main_loop(self) -> None:
