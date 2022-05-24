@@ -72,7 +72,7 @@ class UserPrompt:
             self.E = array[1]
             c = 0
          
-            while c < self.E:
+            while True:
                 # print(c)
                 c += 1
                 x = fread.readline()
@@ -143,7 +143,7 @@ class UserPrompt:
         while True:
             s = input(
                 "Choose one of the following options: [testing, user input, file input, exit]. ").lower()
-            if s == "user input":
+            if s == "user input" or s == "usrin":
                 self.user_loop(s)
                 self.display_results()
                 s = input(
@@ -161,7 +161,7 @@ class UserPrompt:
                 # tests.testing_suit()
                 return
             
-            elif s == "file input":
+            elif s == "file input" or s == "fin":
                 self.edge_list_from_file()
                 self.display_results()
                 s = input(
