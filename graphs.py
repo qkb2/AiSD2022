@@ -1,5 +1,6 @@
 from copy import deepcopy
 import random
+import time
 
 
 def edge_list_to_vertex_list(edge_list: list):
@@ -303,12 +304,22 @@ if __name__ == "__main__":
     test_list = [[0, 1], [1, 2], [2, 3], [3, 0]]
     test_list_nothing = [[0, 1], [1, 2], [2, 3]]
     test_list_there_should_be_eulers = [[4, 1], [1, 2], [2, 3], [3, 4]]
-    # rand_mat = UndirAdjMatrix()
-    # rand_mat.create_random_undir_graph(10, 0.5)
-    # print(rand_mat)
+    rand_mat = UndirAdjMatrix()
+    for i in range(10, 20):
+        j = 0.1
+        while j <= 0.9:
+            print("------")
+            print(i, j)
+            rand_mat.create_random_undir_graph(i, j)
+            start_time = time.perf_counter()
+            rand_mat.hamiltonian_cycle()
+            stop_time = time.perf_counter()
+            print(stop_time - start_time)
+            start_time = time.perf_counter()
+            rand_mat.eulerian_cycle()
+            stop_time = time.perf_counter()
+            print(stop_time - start_time)
+            j += 0.1
     # rand_list = DirAdjList()
     # rand_list.create_random_dir_graph(10, 0.5)
     # print(rand_list)
-    easy_test(test_list)
-    easy_test(test_list_nothing)
-    easy_test(test_list_there_should_be_eulers)
