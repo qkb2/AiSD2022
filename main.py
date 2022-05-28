@@ -1,4 +1,4 @@
-
+import knapsack
 from os.path import isfile
 
 
@@ -21,6 +21,30 @@ class UserPrompt:
             "value of n to reflect that.")
         while True:
             x = input(
+                "Please enter the number of elements and backpack capacity as a pair.\n")
+            if x == '':
+                if len(self.array) == 0:
+                    print("input is empty")
+                    continue
+
+            harr = x.split()
+            try:
+                harr = list(map(int, harr))
+            except ValueError:
+                print("The input seems to include non-numbers")
+                continue
+            if harr[0] == 0 or harr[1] == 0:
+                print("The numbers cannot be zeroes.")
+                continue
+            if len(harr) == 2:
+                self.n = harr[0]
+                self.b = harr[1]
+                break
+            else:
+                print("Too many numbers in a row.")
+
+        while True:
+            x = input(
                 "Please enter your numbers as pairs, entering one pair at the time, one whitespace between each number: "
                 "and one new line between each pair\n")
             if x == '':
@@ -35,7 +59,9 @@ class UserPrompt:
             except ValueError:
                 print("The input seems to include non-numbers")
                 continue
-
+            if harr[0] == 0 or harr[1] == 0:
+                print("The numbers cannot be zeroes.")
+                continue
             if len(harr) == 2:
                 self.array.append(harr)
             else:
@@ -90,6 +116,9 @@ class UserPrompt:
                 except ValueError:
                     continue
 
+                if harr[0] == 0 or harr[1] == 0:
+                    continue
+
                 if len(harr) == 2:
                     self.array.append(harr)
 
@@ -104,47 +133,17 @@ class UserPrompt:
                 options_looper = self.list_input()
 
     def display_results(self):
-        adj_mat = graphs.UndirAdjMatrix()
-        adj_list = graphs.DirAdjList()
-        adj_mat.create_matrix_wrapper(self.edge_list)
-        adj_list.create_list_wrapper(self.edge_list)
-        print("Undirected adjacency matrix:")
-        print(adj_mat)
-        print("Directed adjacency list:")
-        print(adj_list)
-        print("Searching for paths...")
-
-        arr_ham_am = adj_mat.hamilton_wrapper()
-        arr_eu_am = adj_mat.euler_wrapper()
-        test_am = adj_mat.euler_decision()
-        arr_ham_al = adj_list.hamilton_wrapper()
-        arr_eu_al = adj_list.euler_wrapper()
-        test_al = adj_list.euler_decision()
-
-        print("Results:")
-        if len(arr_ham_am) == 0:
-            print("No hamiltonian path for undirected graph.")
-        else:
-            print("Hamiltonian path for undirected graph: {}".format(arr_ham_am))
-
-        if len(arr_ham_am) == 0:
-            print("No hamiltonian path for directed graph.")
-        else:
-            print("Hamiltonian path for directed graph: {}".format(arr_ham_al))
-
-        if len(arr_eu_am) == 0 and not test_am:
-            print("No eulerian path for undirected graph.")
-        elif len(arr_eu_am) != 0 and test_am:
-            print("Eulerian path for undirected graph: {}".format(arr_eu_am))
-        else:
-            print("An error ocurred (Euler - undirected).")
-
-        if len(arr_eu_al) == 0 and not test_al:
-            print("No eulerian path for directed graph.")
-        elif len(arr_eu_al) != 0 and test_al:
-            print("Eulerian path for directed graph: {}".format(arr_eu_al))
-        else:
-            print("An error ocurred (Euler - directed).")
+        ks = knapsack.Knapsack()
+        ks.create_from_list(self.b, self.array)
+        bfarr, bffmax, bfw = ks.brute_force()
+        garr, gfmax, gw = ks.greedy()
+        darr, dfmax, dw = ks.dynamic()
+        print(
+            "Brute force method: sorted array: {}, fmax: {}, total weight: {}".format(bfarr, bffmax, bfw))
+        print(
+            "Greedy method: sorted array: {}, fmax: {}, total weight: {}".format(garr, gfmax, gw))
+        print(
+            "Dynamic method: sorted array: {}, fmax: {}, total weight: {}".format(darr, dfmax, dw))
 
     def main_loop(self) -> None:
         while True:
