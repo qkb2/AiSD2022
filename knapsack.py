@@ -49,6 +49,7 @@ class Knapsack:
     def brute_force(self):
         fmax = 0
         solution = []
+        sol_w = 0
         for i in range(1, 2**self.n-1):
             bin_hack = dec2bin(i, self.n)
             w = 0
@@ -60,12 +61,13 @@ class Knapsack:
             if w <= self.b and f > fmax:
                 fmax = f
                 sol_str = bin_hack
+                sol_w = w
 
         for i in range(self.n):
             if sol_str[i] == 1:
                 solution.append(i+1)
 
-        return solution, fmax, w # if fmax = 0 then the solution is invalid
+        return solution, fmax, sol_w # if fmax = 0 then the solution is invalid
 
     def greedy(self):
         greedy_array = sorted(self.elements, key=lambda thing: thing.approx, reverse=True)
